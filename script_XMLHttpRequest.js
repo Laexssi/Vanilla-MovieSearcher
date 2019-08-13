@@ -17,23 +17,32 @@ const requestApi = (method, url) => {
 
     request.open(method, url);
     request.send();
-
-    request.addEventListener('load', () => {
-        if (request.readyState !== 4) return;
-
+    request.responseType = "json";
+    request.onprogress = () => movie.innerHTML = `readyState: ${request.readyState}`;
+    request.onload = () => {
+        movie.innerHTML = "";
         if (request.status !== 200) {
+            movie.innerHTML = `Ошибка ${request.status}: ${request.statusText}`;
             console.log('error' + request.status)
         }
         
-        const output = JSON.parse(request.responseText);
-        let inner = '';
+        const output = request.response;
+        
+        if (output.results.length == 0) {
+            movie.innerHTML = "Ничего не найдено";
+        }
+        
         output.results.forEach ((item) => {
             let nameItem = item.name || item.title;
-            inner +=  `<div class="col-12 col-md-4 col-xl-3">${nameItem}</div>`
+            const movieName = document.createElement("div");
+            movieName.classList.add("col-12", "col-md-4", "col-xl-3");
+            movie.appendChild(movieName);
+            movieName.innerHTML = nameItem;
         })
-        movie.innerHTML = inner;
+        
         console.log(output);
-    })
+    }
 };
 
 searchForm.addEventListener('submit', apiSearch);
+    
