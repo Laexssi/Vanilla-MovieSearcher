@@ -7,15 +7,43 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>MovieSearcher</title>
+    <title>
+        MovieSearcher
+    </title>
 </head>
 
 <body>
     <style>
-    .item {
-        margin: 20px 0;
-        text-align: center;
-    }
+        .img-fluid {
+            height: 360px;
+        }
+        /* .container{
+            max-width: 100%;
+        } */
+        .item {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        
+        .spinner {
+            margin: 0 auto;
+            width: 100px;
+            height: 100px;
+            border: 10px solid;
+            border-radius: 50%;
+            border-left-color: transparent;
+            border-top-color: #aaa;
+            border-left-color: #555;
+            border-bottom-color: #000;
+            animation: spin 500ms infinite;
+        }
+
+        @keyframes spin {
+            100%{
+                transform: rotate(360deg);
+            }
+        }
     </style>
     <nav class="navbar">
         <div class="container"> <a href="index.hmtl" class="navbar-brand">MovieSearcher</a></div>
@@ -31,8 +59,15 @@
             </form>
         </div>
     </div>
-    <div class="container" id = "container-movies">
+    <div class="container" id="container-movies">
+        
         <div id="movies" class="row"></div>
+        <!-- <template>
+            <div id="movieCard" class = "col-12 col-md-4 col-xl-3 item">
+            <h5></h5>
+            <img class = "img-fluid" src=""/>
+            </div
+        </template> -->
     </div>
 
     <script src="./script_fetch.js"></script>
