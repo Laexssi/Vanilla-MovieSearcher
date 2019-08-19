@@ -7,15 +7,97 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>MovieSearcher</title>
+    <title>
+        MovieSearcher
+    </title>
 </head>
 
 <body>
     <style>
-    .item {
-        margin: 20px 0;
-        text-align: center;
-    }
+        .chevron::before {
+            border-style: solid;
+            border-width: 0.25em 0.25em 0 0;
+            content: '';
+            display: inline-block;
+            height: 1.5em;
+            left: 0em;
+            position: relative;
+            top: 0.35em;
+            transform: rotate(-45deg);
+            vertical-align: top;
+            width: 1.5em;
+            pointer-events: none;
+        }
+
+        .button-scroll {
+            display: inline-block;
+            width: 75px;
+            height: 75px;
+            background-color: lightsteelblue;
+            border-radius: 50%;
+            border: none;
+            z-index: 55;
+            position: fixed;
+            bottom: 50px;
+            right: 30px;
+            transition: background-color .3s,
+                opacity .5s, visibility .5s;
+            opacity: 0;
+            /* visibility: hidden; */
+            z-index: 1000;
+
+        }
+
+        .show {
+            opacity: 1;
+            visibility: visible; 
+        }
+
+        .button-scroll:hover {
+            cursor: pointer;
+            background-color: rgb(236, 230, 230);
+        }
+
+        .button-scroll:focus {
+            outline: none;
+        }
+
+        .img-fluid {
+            height: 360px;
+        }
+
+        /* .container{
+            max-width: 100%;
+        } */
+        .item {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .btn {
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .spinner {
+            margin: 0 auto;
+            margin-bottom: 100px;
+            width: 100px;
+            height: 100px;
+            border: 10px solid;
+            border-radius: 50%;
+            border-left-color: transparent;
+            border-top-color: #aaa;
+            border-left-color: #555;
+            border-bottom-color: #000;
+            animation: spin 500ms infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
     <nav class="navbar">
         <div class="container"> <a href="index.hmtl" class="navbar-brand">MovieSearcher</a></div>
@@ -31,11 +113,24 @@
             </form>
         </div>
     </div>
-    <div class="container" id = "container-movies">
+    <div class="container" id="container-movies">
+
         <div id="movies" class="row"></div>
+        <!-- <template id="movies-template">
+            <div  id="movie-card" class = "col-12 col-md-4 col-xl-3 item">
+            <h5 id = "movie-title"></h5>
+            <img id = "movie-poster" class = "img-fluid" src=""/>
+            </div>
+        </template> -->
+
+        <button type="button" class="button-scroll" onclick="scrollToTop()"><span class="chevron"></span></button>
+        <template id="load-button-template">
+            <button id="load-button" type="button" class="btn btn-primary btn-lg btn-block"
+                onclick="loadNextPage()">Load more</button>
+        </template>
     </div>
 
-    <script src="./script_fetch.js"></script>
+    <script src="./script_Promise.js"></script>
 </body>
 
 
