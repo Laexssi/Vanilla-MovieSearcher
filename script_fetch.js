@@ -3,33 +3,26 @@ const searchForm = document.querySelector("#search-form");
 const searchText = document.querySelector(".form-control");
 const movies = document.querySelector("#movies");
 const urlPoster = "https://image.tmdb.org/t/p/w500";
-// const movieBlock = document.querySelector('#container-movies')
+const noPosterUrl = "https://filmitorrentom.org/films/noposter.jpg";
+let page = 1;
+let searchTextValue = "";
+
 
 const apiSearch = e => {
   e.preventDefault();
-  const searchTextValue = searchText.value;
+  searchTextValue = searchText.value;
+  page = 1;
+  startIndex = 0;
   if (searchTextValue.trim().length === 0) {
     movies.insertAdjacentHTML(
       "afterbegin",
-      "<h2 class='col-12 text-center text-info'>Пустой запрос</h2>"
+      "<h2 class='col-12 text-center text-info'>Empty input</h2>"
     );
     return;
   }
-  const server = `https://api.themoviedb.org/3/search/multi/?api_key=${apiKey}&language=ru&query=${searchTextValue}`;
+  const server = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}`;
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
-  // movies.innerHTML = '<div class="spinner"></div>';
-
-  fetch(server, {
-    method: "GET",
-  mode: 'no-cors',
-    headers: {
-      "Content-Type": "application/json",
-     
-    },
-    xhrFields: {
-      withCredentials: false
-    }
-  })
+  fetch(server)
     .then(result => {
         console.log(result);
       if (result.status !== 200) {
@@ -42,53 +35,126 @@ const apiSearch = e => {
       console.log(output);
 
       if (output.results.length == 0) {
-        movies.innerHTML = `<h2 class='col-12 text-info text-center'>
-                    Ничего не найдено
-                    </h2>`;
+        movies.insertAdjacentHTML(
+          "afterbegin",
+          "<h2 class='col-12 text-center text-info'>No results</h2>"
+        );
       }
 
       output.results.forEach((item, index) => {
-        try {
-          const movieTemplate = document.querySelector("#movies-template");
-          const cloneMovieCard = movieTemplate.content.cloneNode(true);
+    
+          generateMovieCard(item, index);
 
-          movies.appendChild(cloneMovieCard);
-
-          const movieCard = document.querySelectorAll("#movie-card"),
-            movieName = document.querySelectorAll("#movie-title"),
-            moviePoster = document.querySelectorAll("#movie-poster");
-
-          console.log(movieCard);
-
-          let nameItem = item.name || item.title;
-          let posterUrl;
-
-          item.poster_path
-            ? (posterUrl = `${urlPoster + item.poster_path}`)
-            : (posterUrl = "https://filmitorrentom.org/films/noposter.jpg");
-
-          movieName[index].innerHTML = nameItem;
-          moviePoster[index].src = posterUrl;
-          moviePoster[index].alt = nameItem;
-          moviePoster[index].classList.add("img-fluid");
-          movieCard[index].classList.add(
-            "col-12",
-            "col-md-4",
-            "col-xl-3",
-            "item"
-          );
-
-          if (index >= 19) {
-            movies.appendChild
-          }
-        } catch (e) {
-          console.log(e);
-        }
       });
     })
     .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
 };
 
+const requestApi = (method, url) => {
+  return new Promise(function (resolve, reject) {
+    const request = new XMLHttpRequest();
+
+    request.open(method, url);
+    request.onload = () => {
+      if (request.status !== 200) {
+        reject({ status: request.status });
+        return;
+      }
+
+      resolve(request.response);
+    };
+    request.onerror = () => {
+      reject({ status: request.status });
+    };
+
+    request.responseType = "json";
+    request.send();
+  });
+};
+
+const generateMovieCard = (item, index) => {
+  const movieCard = document.createElement('div');
+  movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "item");
+
+
+
+  const movieName = document.createElement('h5');
+  const movieTitle = item.name || item.title;
+  movieName.innerHTML = movieTitle;
+
+
+  const moviePoster = document.createElement('img');
+  moviePoster.classList.add("img-fluid");
+  moviePoster.src = item.poster_path
+    ? posterUrl = `${urlPoster + item.poster_path}`
+    : posterUrl = noPosterUrl;
+  moviePoster.alt = movieTitle;
+
+  movies.appendChild(movieCard);
+  movieCard.appendChild(moviePoster);
+  movieCard.appendChild(movieName);
+
+
+  movieCard.setAttribute('index', index);
+  movieCard.setAttribute('page', page);
+
+
+
+  const templateButton = document.querySelector("#load-button-template")
+
+  const cloneTemplateButton = templateButton.content.cloneNode(true);
+
+
+  if (index >= 19) {
+    movies.appendChild(cloneTemplateButton);
+  }
+};
+
+const loadNextPage = () => {
+  page += 1;
+  console.log(page);
+ 
+  const server = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}&page=${page}`;
+  const loadButton = document.querySelector('#load-button');
+
+  loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
+
+  requestApi("GET", server)
+    .then(result => {
+      const spinner = document.querySelector(".spinner");
+      loadButton.remove();
+      spinner.remove();
+      const output = result;
+      console.log(output);
+
+      if (output.results.length == 0) {
+        movies.insertAdjacentHTML(
+          "afterbegin",
+          "<h2 class='col-12 text-center text-info'>No more movies</h2>"
+        );
+        }
+      output.results.forEach((item, index) => {
+        generateMovieCard(item, index);
+    });
+    })
+};
+
+
+
 searchForm.addEventListener("submit", apiSearch);
 
-function showInfo() {}
+
+const isScroll = () => {
+
+  
+  ( document.documentElement.scrollTop > 500) 
+  ? document.querySelector(".button-scroll").classList.add("show")
+  : document.querySelector(".button-scroll").classList.remove("show")
+}
+
+const scrollToTop = () => {
+  
+  document.documentElement.scrollTop = 0;
+}
+
+window.onscroll = function() {isScroll()};
