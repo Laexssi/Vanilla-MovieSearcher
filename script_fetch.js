@@ -24,7 +24,7 @@ const apiSearch = e => {
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   fetch(server)
     .then(result => {
-        console.log(result);
+      console.log(result);
       if (result.status !== 200) {
         return Promise.reject(result);
       }
@@ -42,8 +42,8 @@ const apiSearch = e => {
       }
 
       output.results.forEach((item, index) => {
-    
-          generateMovieCard(item, index);
+
+        generateMovieCard(item, index);
 
       });
     })
@@ -90,13 +90,16 @@ const generateMovieCard = (item, index) => {
     : posterUrl = noPosterUrl;
   moviePoster.alt = movieTitle;
 
-  movies.appendChild(movieCard);
-  movieCard.appendChild(moviePoster);
-  movieCard.appendChild(movieName);
-
+  if (item.media_type !== "person") {
+    movies.appendChild(movieCard);
+    movieCard.appendChild(moviePoster);
+    movieCard.appendChild(movieName);
+  }
 
   movieCard.setAttribute('index', index);
   movieCard.setAttribute('page', page);
+  movieCard.setAttribute('data-id', item.id);
+  movieCard.setAttribute('data-type', item.media_type);
 
 
 
@@ -108,12 +111,21 @@ const generateMovieCard = (item, index) => {
   if (index >= 19) {
     movies.appendChild(cloneTemplateButton);
   }
+
+  addEventMovies();
+
+
 };
+
+const addEventMovies = () => {
+  const allCards = document.querySelectorAll(".item");
+  allCards.forEach((elem) => {elem.style.cursor = "pointer"; elem.addEventListener("click", showFullInfo)})
+}
 
 const loadNextPage = () => {
   page += 1;
   console.log(page);
- 
+
   const server = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}&page=${page}`;
   const loadButton = document.querySelector('#load-button');
 
@@ -132,35 +144,39 @@ const loadNextPage = () => {
           "afterbegin",
           "<h2 class='col-12 text-center text-info'>No more movies</h2>"
         );
-        }
+      }
       output.results.forEach((item, index) => {
         generateMovieCard(item, index);
-    });
+      });
     })
 };
-
-
 
 searchForm.addEventListener("submit", apiSearch);
 
 
+//scroll animation
 const isScroll = () => {
 
-  
-  ( document.documentElement.scrollTop > 500) 
-  ? document.querySelector(".button-scroll").classList.add("show")
-  : document.querySelector(".button-scroll").classList.remove("show")
+
+  (document.documentElement.scrollTop > 500)
+    ? document.querySelector(".button-scroll").classList.add("show")
+    : document.querySelector(".button-scroll").classList.remove("show")
 }
 
 const scrollToTop = (scrollDuration) => {
 
- var scrollStep = -window.scrollY / (scrollDuration / 15),
-        scrollInterval = setInterval(function(){
-        if ( window.scrollY != 0 ) {
-            window.scrollBy( 0, scrollStep );
-        }
-        else clearInterval(scrollInterval); 
-    },15);
+  var scrollStep = -window.scrollY / (scrollDuration / 15),
+    scrollInterval = setInterval(function () {
+      if (window.scrollY != 0) {
+        window.scrollBy(0, scrollStep);
+      }
+      else clearInterval(scrollInterval);
+    }, 15);
 }
 
-window.onscroll = function() {isScroll()};
+window.onscroll = function () { isScroll() };
+//
+
+function showFullInfo() {
+  console.log(this);
+}
