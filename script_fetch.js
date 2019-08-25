@@ -55,6 +55,13 @@ const generateMovieCard = (item, index) => {
 
 };
 
+const buttonDecorator = (f) => {
+  return function() {
+    f.apply(this, arguments);
+    document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
+  }
+}
+
 function requestApi(method, url)  {
   return new Promise(function (resolve, reject) {
     const request = new XMLHttpRequest();
@@ -209,9 +216,9 @@ const loadNextTrandingPage = () => {
         );
         }
       output.results.forEach((item, index) => {
-        generateMovieCard(item, index);
+        buttonDecorator(generateMovieCard(item, index));
     });
-    document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
+   
     })
   };
 
