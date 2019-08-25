@@ -6,71 +6,8 @@ const urlPoster = "https://image.tmdb.org/t/p/w500";
 const noPosterUrl = "https://filmitorrentom.org/films/noposter.jpg";
 let page = 1;
 let searchTextValue = "";
+const trendignUrl = `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}&language=ru&page=1`;
 
-
-const apiSearch = e => {
-  e.preventDefault();
-  searchTextValue = searchText.value;
-  page = 1;
-  startIndex = 0;
-  if (searchTextValue.trim().length === 0) {
-    movies.insertAdjacentHTML(
-      "afterbegin",
-      "<h2 class='col-12 text-center text-info'>Empty input</h2>"
-    );
-    return;
-  }
-  const server = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}`;
-  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
-  fetch(server)
-    .then(result => {
-      console.log(result);
-      if (result.status !== 200) {
-        return Promise.reject(result);
-      }
-      return result.json();
-    })
-    .then(output => {
-      movies.innerHTML = "";
-      console.log(output);
-
-      if (output.results.length == 0) {
-        movies.insertAdjacentHTML(
-          "afterbegin",
-          "<h2 class='col-12 text-center text-info'>No results</h2>"
-        );
-      }
-
-      output.results.forEach((item, index) => {
-
-        generateMovieCard(item, index);
-
-      });
-    })
-    .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
-};
-
-const requestApi = (method, url) => {
-  return new Promise(function (resolve, reject) {
-    const request = new XMLHttpRequest();
-
-    request.open(method, url);
-    request.onload = () => {
-      if (request.status !== 200) {
-        reject({ status: request.status });
-        return;
-      }
-
-      resolve(request.response);
-    };
-    request.onerror = () => {
-      reject({ status: request.status });
-    };
-
-    request.responseType = "json";
-    request.send();
-  });
-};
 
 const generateMovieCard = (item, index) => {
   const movieCard = document.createElement('div');
@@ -114,54 +51,183 @@ const generateMovieCard = (item, index) => {
 
   addEventMovies();
 
+ 
 
 };
 
-const addEventMovies = () => {
-  const allCards = document.querySelectorAll(".item");
-  allCards.forEach((elem) => {elem.style.cursor = "pointer"; elem.addEventListener("click", showFullInfo)})
+function requestApi(method, url)  {
+  return new Promise(function (resolve, reject) {
+    const request = new XMLHttpRequest();
+
+    request.open(method, url);
+    request.onload = () => {
+      if (request.status !== 200) {
+        reject({ status: request.status });
+        return;
+      }
+
+      resolve(request.response);
+    };
+    request.onerror = () => {
+      reject({ status: request.status });
+    };
+
+    request.responseType = "json";
+    request.send();
+  });
+};
+const loadContent = (server) => {
+  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  fetch(server)
+    .then(result => {
+      console.log(result);
+      if (result.status !== 200) {
+        return Promise.reject(result);
+
+
+      }
+      return result.json();
+    })
+    .then(output => {
+      movies.innerHTML = "";
+      console.log(output);
+
+      if (output.results.length == 0) {
+        movies.insertAdjacentHTML(
+          "afterbegin",
+          "<h2 class='col-12 text-center text-info'>No results</h2>"
+        );
+      }
+
+      output.results.forEach((item, index) => {
+
+        generateMovieCard(item, index);
+
+      });
+    })
+    .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
 }
+
+const apiSearch = e => {
+  e.preventDefault();
+  searchTextValue = searchText.value;
+  const searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}`;
+  page = 1;
+  if (searchTextValue.trim().length === 0) {
+    movies.insertAdjacentHTML(
+      "afterbegin",
+      "<h2 class='col-12 text-center text-info'>Empty input</h2>"
+    );
+    return;
+  }
+  
+  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  movies.innerHTML = "";
+  loadContent(searchUrl);
+};
 
 const loadNextPage = () => {
   page += 1;
   console.log(page);
 
-  const server = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}&page=${page}`;
+  const nextPage = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}&page=${page}`;
   const loadButton = document.querySelector('#load-button');
-
   loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
+  requestApi("GET", nextPage)
+  .then(result => {
+    const spinner = document.querySelector(".spinner");
+    loadButton.remove();
+    spinner.remove();
+    const output = result;
+    console.log(output);
 
-  requestApi("GET", server)
+    if (output.results.length == 0) {
+      movies.insertAdjacentHTML(
+        "afterbegin",
+        "<h2 class='col-12 text-center text-info'>No more movies</h2>"
+      );
+      }
+    output.results.forEach((item, index) => {
+      generateMovieCard(item, index);
+  });
+  })
+};
+
+const loadTrendContent = (server) => {
+  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  fetch(server)
+    .then(result => {
+      console.log(result);
+      if (result.status !== 200) {
+        return Promise.reject(result);
+
+
+      }
+      return result.json();
+    })
+    .then(output => {
+      movies.innerHTML = "";
+      console.log(output);
+
+      if (output.results.length == 0) {
+        movies.insertAdjacentHTML(
+          "afterbegin",
+          "<h2 class='col-12 text-center text-info'>No results</h2>"
+        );
+      }
+
+      output.results.forEach((item, index) => {
+
+        generateMovieCard(item, index); 
+       
+      });
+      document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
+      
+    })
+    .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
+}
+const loadNextTrandingPage = () => {
+  
+    page += 1;
+    console.log(page);
+  
+    const nextPage = `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}&language=ru&page=${page}`;
+    const loadButton = document.querySelector('#load-button');
+    loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
+    requestApi("GET", nextPage)
     .then(result => {
       const spinner = document.querySelector(".spinner");
       loadButton.remove();
       spinner.remove();
       const output = result;
       console.log(output);
-
+  
       if (output.results.length == 0) {
         movies.insertAdjacentHTML(
           "afterbegin",
           "<h2 class='col-12 text-center text-info'>No more movies</h2>"
         );
-      }
+        }
       output.results.forEach((item, index) => {
         generateMovieCard(item, index);
-      });
+    });
+    document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
     })
+  };
+
+
+const addEventMovies = () => {
+  const allCards = document.querySelectorAll(".item");
+  allCards.forEach((elem) => {elem.style.cursor = "pointer"; elem.addEventListener("click", showFullInfo)})
 };
 
-searchForm.addEventListener("submit", apiSearch);
-
-
-//scroll animation
 const isScroll = () => {
 
 
   (document.documentElement.scrollTop > 500)
     ? document.querySelector(".button-scroll").classList.add("show")
     : document.querySelector(".button-scroll").classList.remove("show")
-}
+};
 
 const scrollToTop = (scrollDuration) => {
 
@@ -174,9 +240,17 @@ const scrollToTop = (scrollDuration) => {
     }, 15);
 }
 
-window.onscroll = function () { isScroll() };
-//
-
 function showFullInfo() {
   console.log(this);
 }
+
+searchForm.addEventListener("submit", apiSearch);
+document.addEventListener("DOMContentLoaded", loadTrendContent(trendignUrl));
+
+
+
+
+
+window.onscroll = function () { isScroll() };
+
+
