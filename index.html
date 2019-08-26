@@ -50,8 +50,14 @@
 
         .show {
             opacity: 1;
-            visibility: visible; 
+            visibility: visible;
         }
+
+
+
+        /* .card-title {
+            margin-top: 10px;
+        } */
 
         .button-scroll:hover {
             cursor: pointer;
@@ -62,17 +68,51 @@
             outline: none;
         }
 
-        .img-fluid {
+        /* .img-fluid {
             height: 360px;
-        }
+            padding: 0px;
+        } */
 
         /* .container{
             max-width: 100%;
         } */
-        .item {
+        /* .item {
             margin: 20px 0;
             text-align: center;
+            background-color: rgb(233,236,239, 0.5);
+            border: solid 1px lightskyblue;
+            border-collapse: collapse;
+            margin: 0px;
+            padding: 0px;
+        } */
+
+        .spacer {
+            padding: 0px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            height: 100%;
+            background-color: rgb(233, 236, 239, 0.3);
+            cursor: pointer;
         }
+
+        .trend-title {
+            border-bottom: 1px solid #EAEAEA;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            border: none;
+        }
+
+        .card-block {
+            padding: 15px;
+        }
+
+        .card-img-top {
+            border-radius: 0;
+        }
+
+
 
         .btn {
             margin-top: 20px;
@@ -90,7 +130,7 @@
             border-top-color: #aaa;
             border-left-color: #555;
             border-bottom-color: #000;
-            animation: spin 500ms infinite;
+            animation: spin 350ms infinite;
         }
 
         @keyframes spin {
@@ -100,7 +140,7 @@
         }
     </style>
     <nav class="navbar">
-        <div class="container"> <a href="index.hmtl" class="navbar-brand">MovieSearcher</a></div>
+        <div class="container"> <a href="./index.html" class="navbar-brand">MovieSearcher</a></div>
     </nav>
     <div class="container">
 
@@ -116,7 +156,7 @@
     <div class="container" id="container-movies">
 
         <div id="movies" class="row"></div>
-     
+
 
         <button type="button" class="button-scroll" onclick="scrollToTop(700)"><span class="chevron"></span></button>
         <template id="load-button-template">

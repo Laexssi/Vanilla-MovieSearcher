@@ -2,26 +2,35 @@ const apiKey = "31a2acbd095355e3b5ac823a2a6f17a4";
 const searchForm = document.querySelector("#search-form");
 const searchText = document.querySelector(".form-control");
 const movies = document.querySelector("#movies");
+const container = document.querySelector("#container-movies");
+
 const urlPoster = "https://image.tmdb.org/t/p/w500";
 const noPosterUrl = "https://filmitorrentom.org/films/noposter.jpg";
 let page = 1;
 let searchTextValue = "";
-const trendignUrl = `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}&language=ru&page=1`;
+const trendignUrl = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=ru`;
 
 
 const generateMovieCard = (item, index) => {
   const movieCard = document.createElement('div');
-  movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "item");
+  movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
 
+  const movieCardBody = document.createElement('div');
+  movieCardBody.classList.add("card-block");
 
+  const spacer = document.createElement('div');
+  spacer.classList.add("spacer");
 
   const movieName = document.createElement('h5');
+  movieName.classList.add("card-title")
   const movieTitle = item.name || item.title;
+  movieTitle.length > 33?
+  movieName.innerHTML = `${movieTitle.slice(0, 30)}...`:
   movieName.innerHTML = movieTitle;
 
 
   const moviePoster = document.createElement('img');
-  moviePoster.classList.add("img-fluid");
+  moviePoster.classList.add("card-img-top");
   moviePoster.src = item.poster_path
     ? posterUrl = `${urlPoster + item.poster_path}`
     : posterUrl = noPosterUrl;
@@ -29,14 +38,18 @@ const generateMovieCard = (item, index) => {
 
   if (item.media_type !== "person") {
     movies.appendChild(movieCard);
-    movieCard.appendChild(moviePoster);
-    movieCard.appendChild(movieName);
+    movieCard.appendChild(spacer);
+    spacer.appendChild(moviePoster);
+    spacer.appendChild(movieCardBody);
+    movieCardBody.appendChild(movieName);
   }
+
+  let mediaType = item.title? "movie" : "tv";
 
   movieCard.setAttribute('index', index);
   movieCard.setAttribute('page', page);
   movieCard.setAttribute('data-id', item.id);
-  movieCard.setAttribute('data-type', item.media_type);
+  movieCard.setAttribute('data-type', mediaType);
 
 
 
@@ -51,38 +64,10 @@ const generateMovieCard = (item, index) => {
 
   addEventMovies();
 
- 
+
 
 };
 
-const buttonDecorator = (f) => {
-  return function() {
-    f.apply(this, arguments);
-    document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
-  }
-}
-
-function requestApi(method, url)  {
-  return new Promise(function (resolve, reject) {
-    const request = new XMLHttpRequest();
-
-    request.open(method, url);
-    request.onload = () => {
-      if (request.status !== 200) {
-        reject({ status: request.status });
-        return;
-      }
-
-      resolve(request.response);
-    };
-    request.onerror = () => {
-      reject({ status: request.status });
-    };
-
-    request.responseType = "json";
-    request.send();
-  });
-};
 const loadContent = (server) => {
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   fetch(server)
@@ -115,7 +100,7 @@ const loadContent = (server) => {
     .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
 }
 
-const apiSearch = e => {
+const loadSearchContent = e => {
   e.preventDefault();
   searchTextValue = searchText.value;
   const searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}`;
@@ -127,9 +112,12 @@ const apiSearch = e => {
     );
     return;
   }
-  
+  const trendTitle = document.querySelector(".trend-title");
+  trendTitle.remove();
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   movies.innerHTML = "";
+  
+  
   loadContent(searchUrl);
 };
 
@@ -140,24 +128,32 @@ const loadNextPage = () => {
   const nextPage = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}&page=${page}`;
   const loadButton = document.querySelector('#load-button');
   loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
-  requestApi("GET", nextPage)
-  .then(result => {
-    const spinner = document.querySelector(".spinner");
-    loadButton.remove();
-    spinner.remove();
-    const output = result;
-    console.log(output);
-
-    if (output.results.length == 0) {
-      movies.insertAdjacentHTML(
-        "afterbegin",
-        "<h2 class='col-12 text-center text-info'>No more movies</h2>"
-      );
+  fetch(nextPage)
+    .then(result => {
+      const spinner = document.querySelector(".spinner");
+      loadButton.remove();
+      spinner.remove();
+      const output = result;
+      console.log(output);
+      if (result.status !== 200) {
+        return Promise.reject(result);
       }
-    output.results.forEach((item, index) => {
-      generateMovieCard(item, index);
-  });
-  })
+      return result.json();
+    })
+    .then(output => {
+      
+      console.log(output);
+
+      if (output.results.length == 0) {
+        movies.insertAdjacentHTML(
+          "afterbegin",
+          "<h2 class='col-12 text-center text-info'>No more movies</h2>"
+        );
+      }
+      output.results.forEach((item, index) => {
+        generateMovieCard(item, index);
+      });
+    })
 };
 
 const loadTrendContent = (server) => {
@@ -183,49 +179,63 @@ const loadTrendContent = (server) => {
         );
       }
 
+      container.insertAdjacentHTML(
+        "afterbegin",
+        "<div class='trend-title'><h2 class='col-12 text-center text-info'>Популярные на этой неделе</h2></div>"
+      );
+
       output.results.forEach((item, index) => {
 
-        generateMovieCard(item, index); 
-       
+        generateMovieCard(item, index);
+
       });
+
       document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
-      
     })
     .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
 }
 const loadNextTrandingPage = () => {
-  
-    page += 1;
-    console.log(page);
-  
-    const nextPage = `https://api.themoviedb.org/3/trending/all/day?api_key=${apiKey}&language=ru&page=${page}`;
-    const loadButton = document.querySelector('#load-button');
-    loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
-    requestApi("GET", nextPage)
+
+  page += 1;
+  console.log(page);
+
+  const nextPage = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=ru&page=${page}`;
+  const loadButton = document.querySelector('#load-button');
+  loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
+  fetch(nextPage)
     .then(result => {
       const spinner = document.querySelector(".spinner");
       loadButton.remove();
       spinner.remove();
-      const output = result;
+      console.log(result);
+      if (result.status !== 200) {
+        return Promise.reject(result);
+      }
+      return result.json();
+    })
+    .then(output => {
+      
       console.log(output);
-  
+
       if (output.results.length == 0) {
         movies.insertAdjacentHTML(
           "afterbegin",
           "<h2 class='col-12 text-center text-info'>No more movies</h2>"
         );
-        }
+      }
       output.results.forEach((item, index) => {
-        buttonDecorator(generateMovieCard(item, index));
-    });
-   
+        generateMovieCard(item, index);
+      });
+      document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
     })
-  };
+};
 
 
 const addEventMovies = () => {
-  const allCards = document.querySelectorAll(".item");
-  allCards.forEach((elem) => {elem.style.cursor = "pointer"; elem.addEventListener("click", showFullInfo)})
+  const allCards = document.querySelectorAll(".card");
+  allCards.forEach((elem) => { 
+    
+    elem.addEventListener("click", showFullInfo) })
 };
 
 const isScroll = () => {
@@ -251,7 +261,7 @@ function showFullInfo() {
   console.log(this);
 }
 
-searchForm.addEventListener("submit", apiSearch);
+searchForm.addEventListener("submit", loadSearchContent);
 document.addEventListener("DOMContentLoaded", loadTrendContent(trendignUrl));
 
 
