@@ -9,68 +9,76 @@ const noPosterUrl = "https://filmitorrentom.org/films/noposter.jpg";
 let page = 1;
 let searchTextValue = "";
 const trendignUrl = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=ru`;
+let searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru`;
+const trendingUrl = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=ru`;
+const genreMoviesUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=ru`;
+const genreTVUrl = `https://api.themoviedb.org/3/genre/tv/list?api_key=${apiKey}&language=ru`;
+
 
 
 const generateMovieCard = (item, index) => {
-  const movieCard = document.createElement('div');
-  movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
+  try {
+    const movieCard = document.createElement('div');
+    movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
 
-  const movieCardBody = document.createElement('div');
-  movieCardBody.classList.add("card-block");
+    const movieCardBody = document.createElement('div');
+    movieCardBody.classList.add("card-block");
 
-  const spacer = document.createElement('div');
-  spacer.classList.add("spacer");
+    const spacer = document.createElement('div');
+    spacer.classList.add("spacer");
 
-  const movieName = document.createElement('h5');
-  movieName.classList.add("card-title")
-  const movieTitle = item.name || item.title;
-  movieTitle.length > 33?
-  movieName.innerHTML = `${movieTitle.slice(0, 30)}...`:
-  movieName.innerHTML = movieTitle;
-
-
-  const moviePoster = document.createElement('img');
-  moviePoster.classList.add("card-img-top");
-  moviePoster.src = item.poster_path
-    ? posterUrl = `${urlPoster + item.poster_path}`
-    : posterUrl = noPosterUrl;
-  moviePoster.alt = movieTitle;
-
-  if (item.media_type !== "person") {
-    movies.appendChild(movieCard);
-    movieCard.appendChild(spacer);
-    spacer.appendChild(moviePoster);
-    spacer.appendChild(movieCardBody);
-    movieCardBody.appendChild(movieName);
-  }
-
-  let mediaType = item.title? "movie" : "tv";
-
-  movieCard.setAttribute('index', index);
-  movieCard.setAttribute('page', page);
-  movieCard.setAttribute('data-id', item.id);
-  movieCard.setAttribute('data-type', mediaType);
+    const movieName = document.createElement('h5');
+    movieName.classList.add("card-title")
+    const movieTitle = item.name || item.title;
+    movieTitle.length > 33 ?
+      movieName.innerHTML = `${movieTitle.slice(0, 30)}...` :
+      movieName.innerHTML = movieTitle;
 
 
+    const moviePoster = document.createElement('img');
+    moviePoster.classList.add("card-img-top");
+    moviePoster.src = item.poster_path ?
+      posterUrl = `${urlPoster + item.poster_path}` :
+      posterUrl = noPosterUrl;
+    moviePoster.alt = movieTitle;
 
-  const templateButton = document.querySelector("#load-button-template")
+    if (item.media_type !== "person") {
+      movies.appendChild(movieCard);
+      movieCard.appendChild(spacer);
+      spacer.appendChild(moviePoster);
+      spacer.appendChild(movieCardBody);
+      movieCardBody.appendChild(movieName);
+    }
 
-  const cloneTemplateButton = templateButton.content.cloneNode(true);
+    let mediaType = item.title ? "movie" : "tv";
+
+    movieCard.setAttribute('index', index);
+    movieCard.setAttribute('page', page);
+    movieCard.setAttribute('data-id', item.id);
+    movieCard.setAttribute('data-type', mediaType);
 
 
-  if (index >= 19) {
-    movies.appendChild(cloneTemplateButton);
-  }
 
-  addEventMovies();
+    const templateButton = document.querySelector("#load-button-template")
 
+    const cloneTemplateButton = templateButton.content.cloneNode(true);
+
+
+    if (index >= 19) {
+      movies.appendChild(cloneTemplateButton);
+    }
+
+    addEventMovies();
+  } catch (error) {
+    consoloe.log("error")
+  };
 
 
 };
 
-const loadContent = (server) => {
+const loadContent = (url) => {
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
-  fetch(server)
+  fetch(url)
     .then(result => {
       console.log(result);
       if (result.status !== 200) {
@@ -96,14 +104,17 @@ const loadContent = (server) => {
         generateMovieCard(item, index);
 
       });
+      if (document.querySelector(".btn")) {
+        document.querySelector(".btn").setAttribute("onclick", "loadNextPage(searchUrl)");
+      }
     })
     .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
 }
 
-const loadSearchContent = e => {
-  e.preventDefault();
+const loadSearchContent = (url) => {
+  url = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru`;
   searchTextValue = searchText.value;
-  const searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}`;
+  searchUrl = url + `&query=${searchTextValue}`;
   page = 1;
   if (searchTextValue.trim().length === 0) {
     movies.insertAdjacentHTML(
@@ -113,22 +124,24 @@ const loadSearchContent = e => {
     return;
   }
   const trendTitle = document.querySelector(".trend-title");
-  trendTitle.remove();
+  if (trendTitle) {
+    trendTitle.remove()
+  };
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   movies.innerHTML = "";
-  
-  
+
+
   loadContent(searchUrl);
 };
 
-const loadNextPage = () => {
+const loadNextPage = (url) => {
   page += 1;
   console.log(page);
 
-  const nextPage = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru&query=${searchTextValue}&page=${page}`;
+  const pageUrl = url + `&page=${page}`;
   const loadButton = document.querySelector('#load-button');
   loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
-  fetch(nextPage)
+  fetch(pageUrl)
     .then(result => {
       const spinner = document.querySelector(".spinner");
       loadButton.remove();
@@ -141,7 +154,7 @@ const loadNextPage = () => {
       return result.json();
     })
     .then(output => {
-      
+
       console.log(output);
 
       if (output.results.length == 0) {
@@ -153,97 +166,44 @@ const loadNextPage = () => {
       output.results.forEach((item, index) => {
         generateMovieCard(item, index);
       });
+
+      if (url == searchUrl) {
+        document.querySelector(".btn").setAttribute("onclick", "loadNextPage(searchUrl)");
+        console.log(`${searchUrl}`)
+      }
+      if (url == trendingUrl) {
+        document.querySelector(".btn").setAttribute("onclick", "loadNextPage(trendingUrl)");
+        console.log(`${trendingUrl}`)
+      }
     })
 };
 
-const loadTrendContent = (server) => {
-  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
-  fetch(server)
-    .then(result => {
-      console.log(result);
-      if (result.status !== 200) {
-        return Promise.reject(result);
 
-
-      }
-      return result.json();
-    })
-    .then(output => {
-      movies.innerHTML = "";
-      console.log(output);
-
-      if (output.results.length == 0) {
-        movies.insertAdjacentHTML(
-          "afterbegin",
-          "<h2 class='col-12 text-center text-info'>No results</h2>"
-        );
-      }
-
-      container.insertAdjacentHTML(
-        "afterbegin",
-        "<div class='trend-title'><h2 class='col-12 text-center text-info'>Популярные на этой неделе</h2></div>"
-      );
-
-      output.results.forEach((item, index) => {
-
-        generateMovieCard(item, index);
-
-      });
-
-      document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
-    })
-    .catch(reason => (movies.innerHTML = `Ошибка: ${reason.status}`));
+const loadTrendContent = (url) => {
+  loadContent(url);
+  setTimeout(() => {
+    container.insertAdjacentHTML(
+      "afterbegin",
+      "<div class='trend-title'><h2 class='col-12 text-center text-info'>Популярные на этой неделе</h2></div>"
+    );
+    document.querySelector("#load-button").setAttribute("onclick", "loadNextPage(trendingUrl)")
+  }, 1000);
 }
-const loadNextTrandingPage = () => {
-
-  page += 1;
-  console.log(page);
-
-  const nextPage = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=ru&page=${page}`;
-  const loadButton = document.querySelector('#load-button');
-  loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
-  fetch(nextPage)
-    .then(result => {
-      const spinner = document.querySelector(".spinner");
-      loadButton.remove();
-      spinner.remove();
-      console.log(result);
-      if (result.status !== 200) {
-        return Promise.reject(result);
-      }
-      return result.json();
-    })
-    .then(output => {
-      
-      console.log(output);
-
-      if (output.results.length == 0) {
-        movies.insertAdjacentHTML(
-          "afterbegin",
-          "<h2 class='col-12 text-center text-info'>No more movies</h2>"
-        );
-      }
-      output.results.forEach((item, index) => {
-        generateMovieCard(item, index);
-      });
-      document.querySelector(".btn").setAttribute("onclick", "loadNextTrandingPage()");
-    })
-};
 
 
 const addEventMovies = () => {
   const allCards = document.querySelectorAll(".card");
-  allCards.forEach((elem) => { 
-    
-    elem.addEventListener("click", showFullInfo) })
+  allCards.forEach((elem) => {
+
+    elem.addEventListener("click", showFullInfo)
+  })
 };
 
 const isScroll = () => {
 
 
-  (document.documentElement.scrollTop > 500)
-    ? document.querySelector(".button-scroll").classList.add("show")
-    : document.querySelector(".button-scroll").classList.remove("show")
+  (document.documentElement.scrollTop > 500) ?
+  document.querySelector(".button-scroll").classList.add("show"): document.querySelector(".button-scroll").classList.remove("show")
 };
 
 const scrollToTop = (scrollDuration) => {
@@ -252,22 +212,43 @@ const scrollToTop = (scrollDuration) => {
     scrollInterval = setInterval(function () {
       if (window.scrollY != 0) {
         window.scrollBy(0, scrollStep);
-      }
-      else clearInterval(scrollInterval);
+      } else clearInterval(scrollInterval);
     }, 15);
 }
 
 function showFullInfo() {
-  console.log(this);
+  const movieUrl = `https://api.themoviedb.org/3/movie/${this.dataset.id}?api_key=${apiKey}>&language=en-US`
+  console.log(this.dataset.id);
 }
 
-searchForm.addEventListener("submit", loadSearchContent);
+
+
+const getGenres = (url, itemName) => {
+  if (localStorage.getItem(itemName) === null) {
+    fetch(url)
+      .then(result => {
+        if (result.status !== 200) {
+          return Promise.reject(result);
+        }
+        return result.json();
+      })
+      .then(output => localStorage.setItem(itemName, JSON.stringify(output)))
+      .catch(reason => (console.log(`Ошибка: ${reason.status}`)));
+  };
+}
+
+searchForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  loadSearchContent(searchUrl);
+});
 document.addEventListener("DOMContentLoaded", loadTrendContent(trendignUrl));
+document.addEventListener("DOMContentLoaded", getGenres(genreMoviesUrl, "movies"));
+document.addEventListener("DOMContentLoaded", getGenres(genreTVUrl, "TV"));
 
 
 
 
 
-window.onscroll = function () { isScroll() };
-
-
+window.onscroll = function () {
+  isScroll()
+};
