@@ -128,7 +128,7 @@ const loadContent = url => {
       if (buttonUrl === trendingUrl) {
         container.insertAdjacentHTML(
           "afterbegin",
-          "<div class='trend-title'><h2 class='col-12 text-center text-info'>Популярные на этой неделе</h2></div>"
+          "<div class='trend-title'><h2 class='col-12 text-center '>Популярные на этой неделе</h2></div>"
         );
       }
     })
@@ -227,8 +227,16 @@ const scrollToTop = scrollDuration => {
 };
 
 function showFullInfo() {
-  const movieUrl = `https://api.themoviedb.org/3/movie/${this.dataset.id}?api_key=${apiKey}>&language=en-US`;
+  const movieUrl = `https://api.themoviedb.org/3/movie/${this.dataset.id}?api_key=${apiKey}&language=ru`;
   console.log(this.dataset.id);
+  fetch(movieUrl)
+    .then(result => {
+      if (result.status !== 200) {
+        return Promise.reject(result)
+      }
+      return result.json()
+    })
+    .then(result => console.log(result))
 }
 
 const getGenres = (url, itemName) => {
