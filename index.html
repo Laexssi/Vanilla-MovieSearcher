@@ -1,88 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script src="https://kit.fontawesome.com/4cc2a98f97.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script src="https://kit.fontawesome.com/4cc2a98f97.js"></script>
     <title>
-        MovieSearcher
+      MovieSearcher
     </title>
-</head>
+  </head>
 
-<body>
+  <body>
     <style>
-        .chevron::before {
-            border-style: solid;
-            border-width: 0.25em 0.25em 0 0;
-            content: '';
-            display: inline-block;
-            height: 1.5em;
-            left: 0em;
-            position: relative;
-            top: 0.35em;
-            transform: rotate(-45deg);
-            vertical-align: top;
-            width: 1.5em;
-            pointer-events: none;
-        }
+      .info-block {
+        background-color: rgb(233, 236, 239, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+      .chevron::before {
+        border-style: solid;
+        border-width: 0.25em 0.25em 0 0;
+        content: "";
+        display: inline-block;
+        height: 1.5em;
+        left: 0em;
+        position: relative;
+        top: 0.35em;
+        transform: rotate(-45deg);
+        vertical-align: top;
+        width: 1.5em;
+        pointer-events: none;
+      }
 
-        .button-scroll {
-            display: inline-block;
-            width: 75px;
-            height: 75px;
-            background-color: lightsteelblue;
-            border-radius: 50%;
-            border: none;
-            z-index: 55;
-            position: fixed;
-            bottom: 50px;
-            right: 30px;
-            transition: background-color .3s,
-                opacity .5s, visibility .5s;
-            opacity: 0;
-            /* visibility: hidden; */
-            z-index: 1000;
+      .button-scroll {
+        display: inline-block;
+        width: 75px;
+        height: 75px;
+        background-color: lightsteelblue;
+        border-radius: 50%;
+        border: none;
+        z-index: 55;
+        position: fixed;
+        bottom: 50px;
+        right: 30px;
+        transition: background-color 0.3s, opacity 0.5s, visibility 0.5s;
+        opacity: 0;
+        /* visibility: hidden; */
+        z-index: 1000;
+      }
 
-        }
+      .show {
+        opacity: 1;
+        visibility: visible;
+      }
 
-        .show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-
-        .jumbotron {
-            padding: 20px 20px;
-            background-color: rgb(32,162,184);
-            margin-bottom: 0px;
-            border-radius: 5px 5px 0px 0px;
-        }
-        /* .card-title {
+      .jumbotron {
+        padding: 20px 20px;
+        background-color: rgb(32, 162, 184);
+        margin-bottom: 0px;
+        border-radius: 5px 5px 0px 0px;
+      }
+      /* .card-title {
             margin-top: 10px;
         } */
 
-        .button-scroll:hover {
-            cursor: pointer;
-            background-color: rgb(236, 230, 230);
-        }
+      .button-scroll:hover {
+        cursor: pointer;
+        background-color: rgb(236, 230, 230);
+      }
 
-        .button-scroll:focus {
-            outline: none;
-        }
+      .button-scroll:focus {
+        outline: none;
+      }
 
-        /* .img-fluid {
-            height: 360px;
-            padding: 0px;
-        } */
+      .img-fluid {
+        max-width: 100%;
+      }
 
-        /* .container{
+      /* .container{
             max-width: 100%;
         } */
-        /* .item {
+      /* .item {
             margin: 20px 0;
             text-align: center;
             background-color: rgb(233,236,239, 0.5);
@@ -92,93 +98,131 @@
             padding: 0px;
         } */
 
-        .spacer {
-            padding: 0px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin: 15px 0;
-            height: 100%;
-            background-color: rgb(233, 236, 239, 0.3);
-            cursor: pointer;
+      .spacer {
+        padding: 0px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin: 15px 0;
+        height: 100%;
+        background-color: rgb(233, 236, 239, 0.3);
+        cursor: pointer;
+      }
+
+      .trend-title {
+        display: block;
+        background-color: #20a2b8;
+        color: white;
+        padding-bottom: 10px;
+        border-radius: 0px 0px 5px 5px;
+        margin-top: 0px;
+        margin-bottom: 10px;
+      }
+
+      .movie-info-title {
+        color: white;
+        background-color: #20a2b8;
+        padding-bottom: 10px;
+        border-radius: 0px 0px 5px 5px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+
+      .card {
+        border: none;
+      }
+
+      .card-block {
+        padding: 15px;
+      }
+
+      .card-img-top {
+        border-radius: 0;
+        /* max-height: 360px; */
+      }
+
+      .btn {
+        margin-top: 20px;
+        margin-bottom: 40px;
+      }
+.movie-title {
+    margin-bottom: 15px;
+}
+      .spinner {
+        margin: 0 auto;
+        margin-bottom: 100px;
+        margin-top: 50px;
+        width: 100px;
+        height: 100px;
+        border: 10px solid;
+        border-radius: 50%;
+        border-left-color: transparent;
+        border-top-color: #aaa;
+        border-left-color: #555;
+        border-bottom-color: #000;
+        animation: spin 350ms infinite;
+      }
+
+      .poster {
+          border-radius: 5px;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
         }
-
-        .trend-title {
-            display: block;
-            background-color: #20a2b8;
-            color: white;
-            padding-bottom: 10px;
-            border-radius: 0px 0px 5px 5px;
-             margin-top: 0px;
-            margin-bottom: 10px;
-        }
-
-        .card {
-            border: none;
-        }
-
-        .card-block {
-            padding: 15px;
-        }
-
-        .card-img-top {
-            border-radius: 0;
-            /* max-height: 360px; */
-            
-        }
-
-
-
-        .btn {
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
-
-        .spinner {
-            margin: 0 auto;
-            margin-bottom: 100px;
-            margin-top: 50px;
-            width: 100px;
-            height: 100px;
-            border: 10px solid;
-            border-radius: 50%;
-            border-left-color: transparent;
-            border-top-color: #aaa;
-            border-left-color: #555;
-            border-bottom-color: #000;
-            animation: spin 350ms infinite;
-        }
-
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+      }
     </style>
+
+    <template id="container-info-template">
+      <div class="col-12 movie-title">
+          <h2 class=" text-center movie-info-title "></h2>
+      </div>
+      <div class="col-4 ">
+        <img class="poster img-fluid" />
+        <p class="text-center">
+          <a class="imdb-ref" href="" target="_blank">Сайт фильма</a>
+        </p>
+      </div>
+      <div class="col-8 no-padding">
+        <p class="vote"></p>
+        <p class="release-date"></p>
+        <p class="overview"></p>
+      </div>
+    </template>
     <nav class="navbar">
-        <div class="container"> <a href="./index.html" class="navbar-brand">Популярные</a></div>
+      <div class="container">
+        <a href="./index.html" class="navbar-brand">Популярные</a>
+      </div>
     </nav>
     <div class="container">
-
-        <div class="jumbotron">
-            
-            <form action="" id="search-form">
-                <input type="text" class="form-control" id="search-text" placeholder="Введите название">
-            </form>
-        </div>
+      <div class="jumbotron">
+        <form action="" id="search-form">
+          <input
+            type="text"
+            class="form-control"
+            id="search-text"
+            placeholder="Введите название"
+          />
+        </form>
+      </div>
     </div>
-    <div class="container" id="container-movies">
+    <div class="container " id="container-movies">
+      <div id="movies" class="row"></div>
 
-        <div id="movies" class="row"></div>
-
-
-        <button type="button" class="button-scroll" onclick="scrollToTop(700)"><span class="chevron"></span></button>
-        <template id="load-button-template">
-            <button id="load-button" type="button" class="btn btn-primary btn-lg btn-block"
-                onclick="">Загрузить еще</button>
-        </template>
+      <button type="button" class="button-scroll" onclick="scrollToTop(700)">
+        <span class="chevron"></span>
+      </button>
+      <template id="load-button-template">
+        <button
+          id="load-button"
+          type="button"
+          class="btn btn-primary btn-lg btn-block"
+          onclick=""
+        >
+          Загрузить еще
+        </button>
+      </template>
     </div>
 
     <script src="./script_fetch.js"></script>
-</body>
-
-
+  </body>
 </html>

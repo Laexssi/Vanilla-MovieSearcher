@@ -5,7 +5,7 @@ const movies = document.querySelector("#movies");
 const container = document.querySelector("#container-movies");
 
 const urlPoster = "https://image.tmdb.org/t/p/w500";
-const noPosterUrl = "https://filmitorrentom.org/films/noposter.jpg";
+const noPosterUrl =` http://www.proficinema.ru/assets/images/cnt/poster_no.png`;
 let page = 1;
 let searchTextValue = "";
 let searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru`;
@@ -35,8 +35,8 @@ const generateMovieCard = (item, index) => {
     const moviePoster = document.createElement("img");
     moviePoster.classList.add("card-img-top");
     moviePoster.src = item.poster_path
-      ? (posterUrl = `${urlPoster + item.poster_path}`)
-      : (posterUrl = noPosterUrl);
+      ? (`${urlPoster + item.poster_path}`)
+      : (  noPosterUrl);
     moviePoster.alt = movieTitle;
 
     if (item.media_type !== "person") {
@@ -94,6 +94,7 @@ const generateMovieCard = (item, index) => {
 };
 
 const loadContent = url => {
+  
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   fetch(url)
     .then(result => {
@@ -227,16 +228,55 @@ const scrollToTop = scrollDuration => {
 };
 
 function showFullInfo() {
-  const movieUrl = `https://api.themoviedb.org/3/movie/${this.dataset.id}?api_key=${apiKey}&language=ru`;
+  movies.innerHTML = "";
+ container.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  let url = "";
+  if (this.dataset.type === 'movie') {
+    url = `https://api.themoviedb.org/3/movie/${this.dataset.id}?api_key=${apiKey}&language=ru`;
+  } else if (this.dataset.type === 'tv') {
+    url = `https://api.themoviedb.org/3/tv/${this.dataset.id}?api_key=${apiKey}&language=ru`;
+  } else {
+    movies.innerHTML = `<h2 class="col-12 text-center text-danger"> Не прописан тип карточки</h2>`;
+  }
   console.log(this.dataset.id);
-  fetch(movieUrl)
+  fetch(url)
     .then(result => {
       if (result.status !== 200) {
         return Promise.reject(result)
       }
       return result.json()
     })
-    .then(result => console.log(result))
+    .then(result => {
+     console.log(result);
+      const templateInfo = document.querySelector("#container-info-template");
+      const clonetemplateInfo = templateInfo.content.cloneNode(true);
+ 
+      const trendTitle = document.querySelector(".trend-title");
+      const spinner = document.querySelector(".spinner");
+      if (trendTitle){ trendTitle.remove();}
+     
+      spinner.remove();
+      movies.innerHTML = "";
+      movies.appendChild(clonetemplateInfo);
+      const movieInfoTitle = document.querySelector(".movie-info-title");
+      const movieInfoPoster = document.querySelector(".poster");
+      const imdbRef = document.querySelector(".imdb-ref");
+      const vote = document.querySelector(".vote");
+      const release = document.querySelector(".release-date");
+      const overview = document.querySelector(".overview");
+      movieInfoTitle.innerHTML = `${result.name || result.title}`;
+      movieInfoPoster.src = result.poster_path
+      ? (`${urlPoster + result.poster_path}`)
+      : (noPosterUrl);
+      movieInfoPoster.alt =  `${result.name || result.title}`;
+      result.homepage
+      ? imdbRef.href = result.homepage
+      : imdbRef.href = `https://imdb.com/title/${result.imdb_id}`;
+      vote.innerHTML = `Рейтинг: ${result.vote_average}/10`;
+      let releaseYear = result.release_date || result.first_air_date
+      release.innerHTML = `Год выхода: ${releaseYear.slice(0,4)}`;
+      overview.innerHTML = result.overview;
+    })
 }
 
 const getGenres = (url, itemName) => {
