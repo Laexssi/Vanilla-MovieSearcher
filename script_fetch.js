@@ -85,15 +85,13 @@ const showFollowList = arr => {
     const genresId =
       item.genres.length != 0
         ? item.genres
-            
             .map(obj => obj.name[0].toUpperCase() + obj.name.slice(1))
             .join(" / ")
         : "Жанр неизвестен";
     movieGenres.innerHTML = `${genresId}`;
 
     movieCardBody.appendChild(movieGenres);
-
-    spacer.appendChild(unfollowButton);
+     spacer.appendChild(unfollowButton);
     addEventMovies();
       });
 
@@ -108,13 +106,15 @@ const addToFollow = button => {
   if (followSet.includes(id)) return;
   followSet.push(id);
   console.log(followSet);
-  localStorage.setItem("followSet", JSON.stringify(followSet));
+  localStorage.setItem("followSet", JSON.stringify(followSet))
+ 
 };
 
 const removeFromFollow = button => {
   const id = button.parentNode.parentNode.getAttribute("data-id");
   button.classList.add("disabled");
   const newFollowSet = followSet.filter(value => value !== id);
+  followSet = newFollowSet;
   console.log(newFollowSet);
   localStorage.setItem("followSet", JSON.stringify(newFollowSet));
 }
@@ -189,7 +189,7 @@ const generateMovieCard = (item, index) => {
 
     movieCardBody.appendChild(movieGenres);
 
-    spacer.appendChild(followButton);
+    if (mediaType === "movie")   spacer.appendChild(followButton);
 
     const templateButton = document.querySelector("#load-button-template");
 
