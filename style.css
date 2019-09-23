@@ -1,0 +1,222 @@
+body {
+    font-family: 'Roboto';
+  }
+  .info-block {
+    background-color: rgb(233, 236, 239, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .chevron::before {
+    border-style: solid;
+    border-width: 0.25em 0.25em 0 0;
+    content: "";
+    display: inline-block;
+    height: 1.5em;
+    left: 0em;
+    position: relative;
+    top: 0.35em;
+    transform: rotate(-45deg);
+    vertical-align: top;
+    width: 1.5em;
+    pointer-events: none;
+  }
+  .button-scroll {
+    display: inline-block;
+    width: 75px;
+    height: 75px;
+    background-color: lightsteelblue;
+    border-radius: 50%;
+    border: none;
+    z-index: 55;
+    position: fixed;
+    bottom: 50px;
+    right: 30px;
+    transition: background-color 0.3s, opacity 0.5s, visibility 0.5s;
+    opacity: 0;
+    /* visibility: hidden; */
+    z-index: 1000;
+  }
+  .show {
+    opacity: 1;
+    visibility: visible;
+  }
+  .jumbotron {
+    padding: 20px 20px;
+    background-color: #000;
+    margin-bottom: 0px;
+    border-radius: 0px;
+   
+  }
+  /* .card-title {
+        margin-top: 10px;
+    } */
+  .button-scroll:hover {
+    cursor: pointer;
+    background-color: rgb(236, 230, 230);
+  }
+  .button-scroll:focus {
+    outline: none;
+  }
+  .img-fluid {
+    max-width: 100%;
+  }
+  /* .container{
+        max-width: 100%;
+    } */
+  /* .item {
+        margin: 20px 0;
+        text-align: center;
+        background-color: rgb(233,236,239, 0.5);
+        border: solid 1px lightskyblue;
+        border-collapse: collapse;
+        margin: 0px;
+        padding: 0px;
+    } */
+  .spacer {
+    padding: 0px;
+    padding-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 15px 0;
+    height: 100%;
+    background-color: rgb(233, 236, 239, 0.3);
+  
+    position: relative;
+  }
+  .trend-title {
+    display: block;
+    background-color: #000;
+    color: white;
+    padding-bottom: 20px;
+    border-radius: 0px 0px 5px 5px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
+  .movie-info-title {
+    color: white;
+    background-color: #000;
+    padding-bottom: 20px;
+    border-radius: 0px 0px 5px 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  .card {
+    border: none;
+  }
+  .card-block {
+    padding: 15px;
+    padding-bottom: 0px;
+  }
+
+  .card-title {
+    cursor: pointer;
+  }
+  .card-img-top {
+    border-radius: 0;
+    display:block;
+
+    cursor: pointer;
+    /* max-height: 360px; */
+  
+    
+}
+   
+a:hover {
+    text-decoration: none;
+    color: white;
+    -webkit-mask-image: linear-gradient(-75deg, rgba(0,0,0,.6) 30%, #000 50%, rgba(0,0,0,.6) 70%);
+    -webkit-mask-size: 200%;
+    animation: shine 1.3s infinite;
+}
+  .card-img-top:hover {
+    opacity: 0.66;
+    transition: 1s;
+  
+  }
+  .btn {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    cursor:pointer;
+  }
+.movie-title {
+margin-bottom: 15px;
+}
+.card-title:hover {
+    -webkit-mask-image: linear-gradient(-75deg, rgba(0,0,0,.6) 30%, #000 50%, rgba(0,0,0,.6) 70%);
+    -webkit-mask-size: 200%;
+    animation: shine 1.3s infinite;
+  }
+  
+  @-webkit-keyframes shine {
+    from {
+      -webkit-mask-position: 150%;
+    }
+    
+    to {
+      -webkit-mask-position: -50%;
+    }
+  }
+}
+  .spinner {
+    margin: 0 auto;
+    margin-bottom: 100px;
+    margin-top: 50px;
+    width: 100px;
+    height: 100px;
+    border: 10px solid;
+    border-radius: 50%;
+    border-left-color: transparent;
+    border-top-color: #aaa;
+    border-left-color: #555;
+    border-bottom-color: #000;
+    animation: spin 350ms infinite;
+  }
+  .poster {
+      border-radius: 5px;
+  }
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .btn-follow {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    margin: 0px;
+    z-index: 100;
+    border: none;
+    color: white;
+  }
+  .btn-follow:hover {
+     opacity: 0.66;
+      transition: 0.66s;
+      color: white;
+  }
+
+
+
+  .red {
+    background-color:#e56c69;
+  }
+
+  .green {
+    background-color: #5ba666;
+  }
+  .card-block {
+    padding-bottom: 30px;
+  }
+
+  .navbar {
+    background-color:#000;
+    border-radius: 5px 5px 0px 0px;
+    /* justify-content: flex-start; */
+  }
+  .navbar-link {
+/* display: flex; */
+    color: white;
+    margin-right: 2em;
+    font-size: 20px;
+  }

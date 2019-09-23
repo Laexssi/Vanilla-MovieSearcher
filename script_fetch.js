@@ -3,7 +3,7 @@ const searchForm = document.querySelector("#search-form");
 const searchText = document.querySelector(".form-control");
 const movies = document.querySelector("#movies");
 const container = document.querySelector("#container-movies");
-let followSet;
+let followMovieSet;
 
 const urlPoster = "https://image.tmdb.org/t/p/w500";
 const noPosterUrl = ` http://www.proficinema.ru/assets/images/cnt/poster_no.png`;
@@ -15,109 +15,126 @@ const genreMoviesUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${
 const genreTVUrl = `https://api.themoviedb.org/3/genre/tv/list?api_key=${apiKey}&language=ru`;
 const onlyMoviesUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=ru`;
 const onlyTVUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}&language=ru`;
+
 let buttonUrl;
 
 const showFollowList = arr => {
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   const trendTitle = document.querySelector(".trend-title");
-  trendTitle.innerHTML = `<h2 class="col-12 text-center">Фильмы, за которыми следите<h2>`;
+  if (trendTitle)
+    trendTitle.innerHTML = `<h2 class="col-12 text-center">Фильмы, за которыми следите<h2>`;
   movies.innerHTML = "";
   arr.forEach(async (item, index) => {
     const url = `https://api.themoviedb.org/3/movie/${item}?api_key=${apiKey}&language=ru`;
-   await fetch(url)
-    .then(result => {
-    
-      if (result.status !== 200) {
-        return Promise.reject(result);
-      }
-      return result.json();
-    })
-    .then(item => {
-      
-      const movieCard = document.createElement("div");
-    movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
+    await fetch(url)
+      .then(result => {
+        if (result.status !== 200) {
+          return Promise.reject(result);
+        }
+        return result.json();
+      })
+      .then(item => {
+        const movieCard = document.createElement("div");
+        movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
 
-    const movieCardBody = document.createElement("div");
-    movieCardBody.classList.add("card-block");
+        const movieCardBody = document.createElement("div");
+        movieCardBody.classList.add("card-block");
 
-    const spacer = document.createElement("div");
-    spacer.classList.add("spacer");
+        const spacer = document.createElement("div");
+        spacer.classList.add("spacer");
 
-    const unfollowButton = document.createElement("div");
-    unfollowButton.classList.add("btn", "btn-dark", "btn-sm", "btn-follow");
-    unfollowButton.innerText = "Удалить";
-    unfollowButton.setAttribute("onclick", "removeFromFollow(this)");
+        const unfollowButton = document.createElement("div");
+        unfollowButton.classList.add(
+          "btn",
+         
+          "btn-sm",
+          "btn-follow",
+          "red"
+        );
+        unfollowButton.innerText = "Удалить";
+        unfollowButton.setAttribute(
+          "onclick",
+          "removeFromFollowWithRender(this)"
+        );
 
-    const movieName = document.createElement("h5");
-    movieName.classList.add("card-title");
-    const movieTitle = item.name || item.title;
-    movieTitle.length > 33
-      ? (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`)
-      : (movieName.innerHTML = movieTitle);
+        const movieName = document.createElement("h5");
+        movieName.classList.add("card-title");
+        const movieTitle = item.name || item.title;
+        movieTitle.length > 33
+          ? (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`)
+          : (movieName.innerHTML = movieTitle);
 
-    const moviePoster = document.createElement("img");
-    moviePoster.classList.add("card-img-top");
-    moviePoster.src = item.poster_path
-      ? `${urlPoster + item.poster_path}`
-      : noPosterUrl;
-    moviePoster.alt = movieTitle;
+        const moviePoster = document.createElement("img");
+        moviePoster.classList.add("card-img-top");
+        moviePoster.src = item.poster_path
+          ? `${urlPoster + item.poster_path}`
+          : noPosterUrl;
+        moviePoster.alt = movieTitle;
 
-    if (item.media_type !== "person") {
-      movies.appendChild(movieCard);
-      movieCard.appendChild(spacer);
-      spacer.appendChild(moviePoster);
-      spacer.appendChild(movieCardBody);
-      movieCardBody.appendChild(movieName);
-    }
+        if (item.media_type !== "person") {
+          movies.appendChild(movieCard);
+          movieCard.appendChild(spacer);
+          spacer.appendChild(moviePoster);
+          spacer.appendChild(movieCardBody);
+          movieCardBody.appendChild(movieName);
+        }
 
-    const mediaType = item.title ? "movie" : "tv";
+        const mediaType = item.title ? "movie" : "tv";
 
-    if (movieCard) {
-      movieCard.setAttribute("index", index);
-      movieCard.setAttribute("page", page);
-      movieCard.setAttribute("data-id", item.id);
-      movieCard.setAttribute("data-type", mediaType);
-      movieCard.setAttribute("genres-ids", item.genre_ids);
-    }
-    const movieGenres = document.createElement("p");
-    movieGenres.classList.add("card-text");
+        if (movieCard) {
+          movieCard.setAttribute("index", index);
+          movieCard.setAttribute("page", page);
+          movieCard.setAttribute("data-id", item.id);
+          movieCard.setAttribute("data-type", mediaType);
+          movieCard.setAttribute("genres-ids", item.genre_ids);
+        }
+        const movieGenres = document.createElement("p");
+        movieGenres.classList.add("card-text");
 
-    const genresId =
-      item.genres.length != 0
-        ? item.genres
-            .map(obj => obj.name[0].toUpperCase() + obj.name.slice(1))
-            .join(" / ")
-        : "Жанр неизвестен";
-    movieGenres.innerHTML = `${genresId}`;
+        const genresId =
+          item.genres.length != 0
+            ? item.genres
+                .map(obj => obj.name[0].toUpperCase() + obj.name.slice(1))
+                .join(" / ")
+            : "Жанр неизвестен";
+        movieGenres.innerHTML = `${genresId}`;
 
-    movieCardBody.appendChild(movieGenres);
-     spacer.appendChild(unfollowButton);
-    addEventMovies();
+        movieCardBody.appendChild(movieGenres);
+        spacer.appendChild(unfollowButton);
+        addEventMovies();
       });
-
-  })
-  
-}
+  });
+};
 
 const addToFollow = button => {
   const id = button.parentNode.parentNode.getAttribute("data-id");
-  button.classList.add("disabled")
-  
-  if (followSet.includes(id)) return;
-  followSet.push(id);
-  console.log(followSet);
-  localStorage.setItem("followSet", JSON.stringify(followSet))
- 
+  if (followMovieSet.includes(id)) return;
+  followMovieSet.push(id);
+  console.log(followMovieSet);
+  localStorage.setItem("followMovieSet", JSON.stringify(followMovieSet));
+  button.innerText = "Удалить";
+  button.setAttribute("onclick", "removeFromFollow(this)");
+  button.classList.remove("green");
+  button.classList.add("red");
 };
 
 const removeFromFollow = button => {
   const id = button.parentNode.parentNode.getAttribute("data-id");
-  button.classList.add("disabled");
-  const newFollowSet = followSet.filter(value => value !== id);
-  followSet = newFollowSet;
-  console.log(newFollowSet);
-  localStorage.setItem("followSet", JSON.stringify(newFollowSet));
-}
+
+  const newFollowMovieSet = followMovieSet.filter(value => value !== id);
+  followMovieSet = newFollowMovieSet;
+  console.log(newFollowMovieSet);
+  localStorage.setItem("followMovieSet", JSON.stringify(newFollowMovieSet));
+  button.innerText = "Следить";
+  button.setAttribute("onclick", "addToFollow(this)");
+  button.classList.remove("red");
+  button.classList.add("green");
+};
+
+const removeFromFollowWithRender = button => {
+  removeFromFollow(button);
+  showFollowList(followMovieSet);
+};
 
 const generateMovieCard = (item, index) => {
   try {
@@ -130,11 +147,6 @@ const generateMovieCard = (item, index) => {
     const spacer = document.createElement("div");
     spacer.classList.add("spacer");
 
-    const followButton = document.createElement("div");
-    followButton.classList.add("btn", "btn-dark", "btn-sm", "btn-follow");
-    followButton.innerText = "Следить";
-    followButton.setAttribute("onclick", "addToFollow(this)");
-
     const movieName = document.createElement("h5");
     movieName.classList.add("card-title");
     const movieTitle = item.name || item.title;
@@ -158,6 +170,29 @@ const generateMovieCard = (item, index) => {
     }
 
     const mediaType = item.title ? "movie" : "tv";
+    if (followMovieSet.includes(item.id.toString(10))) {
+      const unfollowButton = document.createElement("div");
+      unfollowButton.classList.add(
+        "btn",
+        "btn-sm",
+        "btn-follow",
+        "red"
+      );
+      unfollowButton.innerText = "Удалить";
+      unfollowButton.setAttribute("onclick", "removeFromFollow(this)");
+      if (mediaType === "movie") spacer.appendChild(unfollowButton);
+    } else {
+      const followButton = document.createElement("div");
+      followButton.classList.add(
+        "btn",
+        "btn-sm",
+        "btn-follow",
+        "green"
+      );
+      followButton.innerText = "Следить";
+      followButton.setAttribute("onclick", "addToFollow(this)");
+      if (mediaType === "movie") spacer.appendChild(followButton);
+    }
 
     if (movieCard) {
       movieCard.setAttribute("index", index);
@@ -182,14 +217,18 @@ const generateMovieCard = (item, index) => {
       item.genre_ids.length != 0
         ? item.genre_ids
             .map(value => rebuild[value])
-            .map(value => value[0].toUpperCase() + value.slice(1))
+            .map(value => {
+              if (value === undefined) {
+                return "";
+              } else {
+               return value[0].toUpperCase() + value.slice(1);
+              }
+            })
             .join(" / ")
         : "Жанр неизвестен";
     movieGenres.innerHTML = `${genresId}`;
 
     movieCardBody.appendChild(movieGenres);
-
-    if (mediaType === "movie")   spacer.appendChild(followButton);
 
     const templateButton = document.querySelector("#load-button-template");
 
@@ -206,7 +245,8 @@ const generateMovieCard = (item, index) => {
 };
 
 const loadContent = url => {
-  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  movies.innerHTML = "";
+  container.insertAdjacentHTML("beforeend", '<div class="spinner"></div>');
   fetch(url)
     .then(result => {
       console.log(result);
@@ -217,6 +257,8 @@ const loadContent = url => {
     })
     .then(output => {
       movies.innerHTML = "";
+      const spinner = document.querySelector(".spinner");
+      spinner.remove();
       console.log(output);
 
       if (output.results.length == 0) {
@@ -259,9 +301,10 @@ const loadSearchContent = url => {
     );
     return;
   }
+  movies.insertAdjacentHTML("beforeend", '<div class="spinner"></div>');
+
   const trendTitle = document.querySelector(".trend-title");
   trendTitle.innerHTML = `<h2 class="col-12 text-center">Результаты поиска<h2>`;
-  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   movies.innerHTML = "";
   loadContent(searchUrl);
 };
@@ -297,16 +340,16 @@ const loadNextPage = url => {
       output.results.forEach((item, index) => {
         generateMovieCard(item, index);
       });
-      if (document.querySelector(".btn")) {
+      if (document.querySelector(".btn-block")) {
         if (url == searchUrl) {
           document
-            .querySelector(".btn")
+            .querySelector(".btn-block")
             .setAttribute("onclick", "loadNextPage(searchUrl)");
           console.log(`${searchUrl}`);
         }
         if (url == trendingUrl) {
           document
-            .querySelector(".btn")
+            .querySelector(".btn-block")
             .setAttribute("onclick", "loadNextPage(trendingUrl)");
           console.log(`${trendingUrl}`);
         }
@@ -378,20 +421,18 @@ function showFullInfo() {
 
       const trendTitle = document.querySelector(".trend-title");
       const spinner = document.querySelector(".spinner");
-      if (trendTitle) {
-        trendTitle.remove();
-      }
 
       spinner.remove();
       movies.innerHTML = "";
       movies.appendChild(clonetemplateInfo);
-      const movieInfoTitle = document.querySelector(".movie-info-title");
+
       const movieInfoPoster = document.querySelector(".poster");
       const imdbRef = document.querySelector(".imdb-ref");
       const vote = document.querySelector(".vote");
       const release = document.querySelector(".release-date");
       const overview = document.querySelector(".overview");
-      movieInfoTitle.innerHTML = `${result.name || result.title}`;
+      trendTitle.innerHTML = `<h2 class="col-12 text-center">${result.name ||
+        result.title}<h2>`;
       movieInfoPoster.src = result.poster_path
         ? `${urlPoster + result.poster_path}`
         : noPosterUrl;
@@ -420,12 +461,12 @@ const getGenres = (url, itemName) => {
   }
 };
 
-const createFollowSet = () => {
-  followSet =
-    localStorage.getItem("followSet") === null
+const createFollowMovieSet = () => {
+  followMovieSet =
+    localStorage.getItem("followMovieSet") === null
       ? []
-      :  (JSON.parse(localStorage.getItem("followSet")));
-      console.log(followSet);
+      : JSON.parse(localStorage.getItem("followMovieSet"));
+  console.log(followMovieSet);
 };
 
 searchForm.addEventListener("submit", function(e) {
@@ -438,10 +479,7 @@ document.addEventListener(
   "DOMContentLoaded",
   getGenres(genreMoviesUrl, "movies")
 );
-document.addEventListener(
-  "DOMContentLoaded",
-  createFollowSet()
-);
+document.addEventListener("DOMContentLoaded", createFollowMovieSet());
 document.addEventListener("DOMContentLoaded", getGenres(genreTVUrl, "TV"));
 console.log(JSON.parse(localStorage.getItem("movies")));
 console.log(JSON.parse(localStorage.getItem("TV")));
