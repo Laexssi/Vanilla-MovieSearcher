@@ -39,7 +39,6 @@
         width: 1.5em;
         pointer-events: none;
       }
-
       .button-scroll {
         display: inline-block;
         width: 75px;
@@ -56,35 +55,30 @@
         /* visibility: hidden; */
         z-index: 1000;
       }
-
       .show {
         opacity: 1;
         visibility: visible;
       }
-
       .jumbotron {
         padding: 20px 20px;
-        background-color: rgb(32, 162, 184);
+        background-color: #000;
         margin-bottom: 0px;
-        border-radius: 5px 5px 0px 0px;
+        border-radius: 0px;
+       
       }
       /* .card-title {
             margin-top: 10px;
         } */
-
       .button-scroll:hover {
         cursor: pointer;
         background-color: rgb(236, 230, 230);
       }
-
       .button-scroll:focus {
         outline: none;
       }
-
       .img-fluid {
         max-width: 100%;
       }
-
       /* .container{
             max-width: 100%;
         } */
@@ -97,48 +91,49 @@
             margin: 0px;
             padding: 0px;
         } */
-
       .spacer {
         padding: 0px;
+        padding-bottom: 10px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin: 15px 0;
         height: 100%;
         background-color: rgb(233, 236, 239, 0.3);
-        cursor: pointer;
+      
+        position: relative;
       }
-
       .trend-title {
         display: block;
-        background-color: #20a2b8;
+        background-color: #000;
         color: white;
-        padding-bottom: 10px;
+        padding-bottom: 20px;
         border-radius: 0px 0px 5px 5px;
         margin-top: 0px;
         margin-bottom: 10px;
       }
-
       .movie-info-title {
         color: white;
-        background-color: #20a2b8;
-        padding-bottom: 10px;
+        background-color: #000;
+        padding-bottom: 20px;
         border-radius: 0px 0px 5px 5px;
         margin-top: 0px;
         margin-bottom: 0px;
       }
-
       .card {
         border: none;
       }
-
       .card-block {
         padding: 15px;
+        padding-bottom: 0px;
       }
 
+      .card-title {
+        cursor: pointer;
+      }
       .card-img-top {
         border-radius: 0;
+        cursor: pointer;
         /* max-height: 360px; */
       }
-
       .btn {
         margin-top: 20px;
         margin-bottom: 40px;
@@ -160,15 +155,36 @@
         border-bottom-color: #000;
         animation: spin 350ms infinite;
       }
-
       .poster {
           border-radius: 5px;
       }
-
       @keyframes spin {
         100% {
           transform: rotate(360deg);
         }
+      }
+
+      .btn-follow {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        margin: 0px;
+        z-index: 100;
+      }
+      .card-block {
+        padding-bottom: 30px;
+      }
+
+      .navbar {
+        background-color:#000;
+        border-radius: 5px 5px 0px 0px;
+        /* justify-content: flex-start; */
+      }
+      .navbar-link {
+   /* display: flex; */
+        color: white;
+        margin-right: 2em;
+        font-size: 20px;
       }
     </style>
 
@@ -188,19 +204,23 @@
         <p class="overview"></p>
       </div>
     </template>
-    <nav class="navbar">
-      <div class="container">
-        <a href="./index.html" class="navbar-brand">Популярные</a>
-      </div>
-    </nav>
+   
     <div class="container">
+        <nav class="navbar  justify-content-start">
+            
+              <a href="./index.html" class="navbar-link">Общий топ</a>
+              <a href="#" onclick="loadContent(onlyMoviesUrl)" class="navbar-link">Фильмы</a>
+              <a href="#" onclick="loadContent(onlyTVUrl)" class="navbar-link">Сериалы</a>
+              <a href="#" onclick="showFollowList(followSet)" class="navbar-link">Мой список</a>
+         
+          </nav>
       <div class="jumbotron">
         <form action="" id="search-form">
           <input
             type="text"
             class="form-control"
             id="search-text"
-            placeholder="Введите название"
+            placeholder="Поиск по названию"
           />
         </form>
       </div>
@@ -215,7 +235,7 @@
         <button
           id="load-button"
           type="button"
-          class="btn btn-primary btn-lg btn-block"
+          class="btn btn-dark btn-lg btn-block"
           onclick=""
         >
           Загрузить еще

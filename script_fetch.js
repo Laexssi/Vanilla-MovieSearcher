@@ -3,16 +3,121 @@ const searchForm = document.querySelector("#search-form");
 const searchText = document.querySelector(".form-control");
 const movies = document.querySelector("#movies");
 const container = document.querySelector("#container-movies");
+let followSet;
 
 const urlPoster = "https://image.tmdb.org/t/p/w500";
-const noPosterUrl =` http://www.proficinema.ru/assets/images/cnt/poster_no.png`;
+const noPosterUrl = ` http://www.proficinema.ru/assets/images/cnt/poster_no.png`;
 let page = 1;
 let searchTextValue = "";
 let searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&language=ru`;
 const trendingUrl = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=ru`;
 const genreMoviesUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=ru`;
 const genreTVUrl = `https://api.themoviedb.org/3/genre/tv/list?api_key=${apiKey}&language=ru`;
+const onlyMoviesUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=ru`;
+const onlyTVUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}&language=ru`;
 let buttonUrl;
+
+const showFollowList = arr => {
+  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  const trendTitle = document.querySelector(".trend-title");
+  trendTitle.innerHTML = `<h2 class="col-12 text-center">Фильмы, за которыми следите<h2>`;
+  movies.innerHTML = "";
+  arr.forEach(async (item, index) => {
+    const url = `https://api.themoviedb.org/3/movie/${item}?api_key=${apiKey}&language=ru`;
+   await fetch(url)
+    .then(result => {
+    
+      if (result.status !== 200) {
+        return Promise.reject(result);
+      }
+      return result.json();
+    })
+    .then(item => {
+      
+      const movieCard = document.createElement("div");
+    movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
+
+    const movieCardBody = document.createElement("div");
+    movieCardBody.classList.add("card-block");
+
+    const spacer = document.createElement("div");
+    spacer.classList.add("spacer");
+
+    const unfollowButton = document.createElement("div");
+    unfollowButton.classList.add("btn", "btn-dark", "btn-sm", "btn-follow");
+    unfollowButton.innerText = "Удалить";
+    unfollowButton.setAttribute("onclick", "removeFromFollow(this)");
+
+    const movieName = document.createElement("h5");
+    movieName.classList.add("card-title");
+    const movieTitle = item.name || item.title;
+    movieTitle.length > 33
+      ? (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`)
+      : (movieName.innerHTML = movieTitle);
+
+    const moviePoster = document.createElement("img");
+    moviePoster.classList.add("card-img-top");
+    moviePoster.src = item.poster_path
+      ? `${urlPoster + item.poster_path}`
+      : noPosterUrl;
+    moviePoster.alt = movieTitle;
+
+    if (item.media_type !== "person") {
+      movies.appendChild(movieCard);
+      movieCard.appendChild(spacer);
+      spacer.appendChild(moviePoster);
+      spacer.appendChild(movieCardBody);
+      movieCardBody.appendChild(movieName);
+    }
+
+    const mediaType = item.title ? "movie" : "tv";
+
+    if (movieCard) {
+      movieCard.setAttribute("index", index);
+      movieCard.setAttribute("page", page);
+      movieCard.setAttribute("data-id", item.id);
+      movieCard.setAttribute("data-type", mediaType);
+      movieCard.setAttribute("genres-ids", item.genre_ids);
+    }
+    const movieGenres = document.createElement("p");
+    movieGenres.classList.add("card-text");
+
+    const genresId =
+      item.genres.length != 0
+        ? item.genres
+            
+            .map(obj => obj.name[0].toUpperCase() + obj.name.slice(1))
+            .join(" / ")
+        : "Жанр неизвестен";
+    movieGenres.innerHTML = `${genresId}`;
+
+    movieCardBody.appendChild(movieGenres);
+
+    spacer.appendChild(unfollowButton);
+    addEventMovies();
+      });
+
+  })
+  
+}
+
+const addToFollow = button => {
+  const id = button.parentNode.parentNode.getAttribute("data-id");
+  button.classList.add("disabled")
+  
+  if (followSet.includes(id)) return;
+  followSet.push(id);
+  console.log(followSet);
+  localStorage.setItem("followSet", JSON.stringify(followSet));
+};
+
+const removeFromFollow = button => {
+  const id = button.parentNode.parentNode.getAttribute("data-id");
+  button.classList.add("disabled");
+  const newFollowSet = followSet.filter(value => value !== id);
+  console.log(newFollowSet);
+  localStorage.setItem("followSet", JSON.stringify(newFollowSet));
+}
 
 const generateMovieCard = (item, index) => {
   try {
@@ -25,6 +130,11 @@ const generateMovieCard = (item, index) => {
     const spacer = document.createElement("div");
     spacer.classList.add("spacer");
 
+    const followButton = document.createElement("div");
+    followButton.classList.add("btn", "btn-dark", "btn-sm", "btn-follow");
+    followButton.innerText = "Следить";
+    followButton.setAttribute("onclick", "addToFollow(this)");
+
     const movieName = document.createElement("h5");
     movieName.classList.add("card-title");
     const movieTitle = item.name || item.title;
@@ -35,8 +145,8 @@ const generateMovieCard = (item, index) => {
     const moviePoster = document.createElement("img");
     moviePoster.classList.add("card-img-top");
     moviePoster.src = item.poster_path
-      ? (`${urlPoster + item.poster_path}`)
-      : (  noPosterUrl);
+      ? `${urlPoster + item.poster_path}`
+      : noPosterUrl;
     moviePoster.alt = movieTitle;
 
     if (item.media_type !== "person") {
@@ -79,6 +189,8 @@ const generateMovieCard = (item, index) => {
 
     movieCardBody.appendChild(movieGenres);
 
+    spacer.appendChild(followButton);
+
     const templateButton = document.querySelector("#load-button-template");
 
     const cloneTemplateButton = templateButton.content.cloneNode(true);
@@ -94,7 +206,6 @@ const generateMovieCard = (item, index) => {
 };
 
 const loadContent = url => {
-  
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   fetch(url)
     .then(result => {
@@ -120,9 +231,9 @@ const loadContent = url => {
         generateMovieCard(item, index);
       });
       buttonUrl = url;
-      if (document.querySelector(".btn")) {
+      if (document.querySelector("#load-button")) {
         document
-          .querySelector(".btn")
+          .querySelector("#load-button")
           .setAttribute("onclick", "loadNextPage(buttonUrl)");
       }
 
@@ -149,9 +260,7 @@ const loadSearchContent = url => {
     return;
   }
   const trendTitle = document.querySelector(".trend-title");
-  if (trendTitle) {
-    trendTitle.remove();
-  }
+  trendTitle.innerHTML = `<h2 class="col-12 text-center">Результаты поиска<h2>`;
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   movies.innerHTML = "";
   loadContent(searchUrl);
@@ -206,8 +315,24 @@ const loadNextPage = url => {
 };
 
 const addEventMovies = () => {
-  const allCards = document.querySelectorAll(".card");
-  allCards.forEach(elem => {
+  const allPosters = document.querySelectorAll(".card-img-top");
+
+  allPosters.forEach(elem => {
+    const id = elem.parentNode.parentNode.getAttribute("data-id");
+    const type = elem.parentNode.parentNode.getAttribute("data-type");
+    elem.setAttribute("data-id", id);
+    elem.setAttribute("data-type", type);
+    elem.addEventListener("click", showFullInfo);
+  });
+  const allTitles = document.querySelectorAll(".card-title");
+
+  allTitles.forEach(elem => {
+    const id = elem.parentNode.parentNode.parentNode.getAttribute("data-id");
+    const type = elem.parentNode.parentNode.parentNode.getAttribute(
+      "data-type"
+    );
+    elem.setAttribute("data-id", id);
+    elem.setAttribute("data-type", type);
     elem.addEventListener("click", showFullInfo);
   });
 };
@@ -229,11 +354,11 @@ const scrollToTop = scrollDuration => {
 
 function showFullInfo() {
   movies.innerHTML = "";
- container.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
+  movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   let url = "";
-  if (this.dataset.type === 'movie') {
+  if (this.dataset.type === "movie") {
     url = `https://api.themoviedb.org/3/movie/${this.dataset.id}?api_key=${apiKey}&language=ru`;
-  } else if (this.dataset.type === 'tv') {
+  } else if (this.dataset.type === "tv") {
     url = `https://api.themoviedb.org/3/tv/${this.dataset.id}?api_key=${apiKey}&language=ru`;
   } else {
     movies.innerHTML = `<h2 class="col-12 text-center text-danger"> Не прописан тип карточки</h2>`;
@@ -242,19 +367,21 @@ function showFullInfo() {
   fetch(url)
     .then(result => {
       if (result.status !== 200) {
-        return Promise.reject(result)
+        return Promise.reject(result);
       }
-      return result.json()
+      return result.json();
     })
     .then(result => {
-     console.log(result);
+      console.log(result);
       const templateInfo = document.querySelector("#container-info-template");
       const clonetemplateInfo = templateInfo.content.cloneNode(true);
- 
+
       const trendTitle = document.querySelector(".trend-title");
       const spinner = document.querySelector(".spinner");
-      if (trendTitle){ trendTitle.remove();}
-     
+      if (trendTitle) {
+        trendTitle.remove();
+      }
+
       spinner.remove();
       movies.innerHTML = "";
       movies.appendChild(clonetemplateInfo);
@@ -266,17 +393,17 @@ function showFullInfo() {
       const overview = document.querySelector(".overview");
       movieInfoTitle.innerHTML = `${result.name || result.title}`;
       movieInfoPoster.src = result.poster_path
-      ? (`${urlPoster + result.poster_path}`)
-      : (noPosterUrl);
-      movieInfoPoster.alt =  `${result.name || result.title}`;
+        ? `${urlPoster + result.poster_path}`
+        : noPosterUrl;
+      movieInfoPoster.alt = `${result.name || result.title}`;
       result.homepage
-      ? imdbRef.href = result.homepage
-      : imdbRef.href = `https://imdb.com/title/${result.imdb_id}`;
-      vote.innerHTML = `Рейтинг: ${result.vote_average}/10`;
-      let releaseYear = result.release_date || result.first_air_date
-      release.innerHTML = `Год выхода: ${releaseYear.slice(0,4)}`;
-      overview.innerHTML = result.overview;
-    })
+        ? (imdbRef.href = result.homepage)
+        : (imdbRef.href = `https://imdb.com/title/${result.imdb_id}`);
+      vote.innerHTML = `<b>Рейтинг</b>: ${result.vote_average}/10`;
+      let releaseYear = result.release_date || result.first_air_date;
+      release.innerHTML = `<b>Год выхода</b>: ${releaseYear.slice(0, 4)}`;
+      overview.innerHTML = `<b>Описание</b>: <br>${result.overview}`;
+    });
 }
 
 const getGenres = (url, itemName) => {
@@ -293,6 +420,14 @@ const getGenres = (url, itemName) => {
   }
 };
 
+const createFollowSet = () => {
+  followSet =
+    localStorage.getItem("followSet") === null
+      ? []
+      :  (JSON.parse(localStorage.getItem("followSet")));
+      console.log(followSet);
+};
+
 searchForm.addEventListener("submit", function(e) {
   e.preventDefault();
   loadSearchContent(searchUrl);
@@ -302,6 +437,10 @@ document.addEventListener("DOMContentLoaded", loadContent(trendingUrl));
 document.addEventListener(
   "DOMContentLoaded",
   getGenres(genreMoviesUrl, "movies")
+);
+document.addEventListener(
+  "DOMContentLoaded",
+  createFollowSet()
 );
 document.addEventListener("DOMContentLoaded", getGenres(genreTVUrl, "TV"));
 console.log(JSON.parse(localStorage.getItem("movies")));
