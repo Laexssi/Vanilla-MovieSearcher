@@ -46,7 +46,7 @@ const showFollowList = arr => {
         const unfollowButton = document.createElement("div");
         unfollowButton.classList.add(
           "btn",
-         
+
           "btn-sm",
           "btn-follow",
           "red"
@@ -60,15 +60,15 @@ const showFollowList = arr => {
         const movieName = document.createElement("h5");
         movieName.classList.add("card-title");
         const movieTitle = item.name || item.title;
-        movieTitle.length > 33
-          ? (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`)
-          : (movieName.innerHTML = movieTitle);
+        movieTitle.length > 33 ?
+          (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`) :
+          (movieName.innerHTML = movieTitle);
 
         const moviePoster = document.createElement("img");
         moviePoster.classList.add("card-img-top");
-        moviePoster.src = item.poster_path
-          ? `${urlPoster + item.poster_path}`
-          : noPosterUrl;
+        moviePoster.src = item.poster_path ?
+          `${urlPoster + item.poster_path}` :
+          noPosterUrl;
         moviePoster.alt = movieTitle;
 
         if (item.media_type !== "person") {
@@ -92,11 +92,11 @@ const showFollowList = arr => {
         movieGenres.classList.add("card-text");
 
         const genresId =
-          item.genres.length != 0
-            ? item.genres
-                .map(obj => obj.name[0].toUpperCase() + obj.name.slice(1))
-                .join(" / ")
-            : "Жанр неизвестен";
+          item.genres.length != 0 ?
+          item.genres
+          .map(obj => obj.name[0].toUpperCase() + obj.name.slice(1))
+          .join(" / ") :
+          "Жанр неизвестен";
         movieGenres.innerHTML = `${genresId}`;
 
         movieCardBody.appendChild(movieGenres);
@@ -110,7 +110,7 @@ const addToFollow = button => {
   const id = button.parentNode.parentNode.getAttribute("data-id");
   if (followMovieSet.includes(id)) return;
   followMovieSet.push(id);
-  console.log(followMovieSet);
+  // console.log(followMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(followMovieSet));
   button.innerText = "Удалить";
   button.setAttribute("onclick", "removeFromFollow(this)");
@@ -123,7 +123,7 @@ const removeFromFollow = button => {
 
   const newFollowMovieSet = followMovieSet.filter(value => value !== id);
   followMovieSet = newFollowMovieSet;
-  console.log(newFollowMovieSet);
+  // console.log(newFollowMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(newFollowMovieSet));
   button.innerText = "Следить";
   button.setAttribute("onclick", "addToFollow(this)");
@@ -150,15 +150,15 @@ const generateMovieCard = (item, index) => {
     const movieName = document.createElement("h5");
     movieName.classList.add("card-title");
     const movieTitle = item.name || item.title;
-    movieTitle.length > 33
-      ? (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`)
-      : (movieName.innerHTML = movieTitle);
+    movieTitle.length > 33 ?
+      (movieName.innerHTML = `${movieTitle.slice(0, 30)}...`) :
+      (movieName.innerHTML = movieTitle);
 
     const moviePoster = document.createElement("img");
     moviePoster.classList.add("card-img-top");
-    moviePoster.src = item.poster_path
-      ? `${urlPoster + item.poster_path}`
-      : noPosterUrl;
+    moviePoster.src = item.poster_path ?
+      `${urlPoster + item.poster_path}` :
+      noPosterUrl;
     moviePoster.alt = movieTitle;
 
     if (item.media_type !== "person") {
@@ -205,31 +205,33 @@ const generateMovieCard = (item, index) => {
     movieGenres.classList.add("card-text");
 
     const genreArr =
-      mediaType === "movie"
-        ? JSON.parse(localStorage.getItem("movies")).genres
-        : JSON.parse(localStorage.getItem("TV")).genres;
+      mediaType === "movie" ?
+      JSON.parse(localStorage.getItem("movies")).genres :
+      JSON.parse(localStorage.getItem("TV")).genres;
 
     const rebuild = genreArr.reduce((acc, value) => {
       acc[value.id] = value.name;
       return acc;
     }, {});
-    const genresId =
-      item.genre_ids.length != 0
-        ? item.genre_ids
-            .map(value => rebuild[value])
-            .map(value => {
-              if (value === undefined) {
-                return "";
-              } else {
-               return value[0].toUpperCase() + value.slice(1);
-              }
-            })
-            .join(" / ")
-        : "Жанр неизвестен";
+
+    if (item.genre_ids)
+   { const genresId =
+      item.genre_ids.length != 0 ?
+      item.genre_ids
+      .map(value => rebuild[value])
+      .map(value => {
+        if (value === undefined) {
+          return "";
+        } else {
+          return value[0].toUpperCase() + value.slice(1);
+        }
+      })
+      .join(" / ") :
+      "Жанр неизвестен";
     movieGenres.innerHTML = `${genresId}`;
 
     movieCardBody.appendChild(movieGenres);
-
+}
     const templateButton = document.querySelector("#load-button-template");
 
     const cloneTemplateButton = templateButton.content.cloneNode(true);
@@ -249,7 +251,7 @@ const loadContent = url => {
   container.insertAdjacentHTML("beforeend", '<div class="spinner"></div>');
   fetch(url)
     .then(result => {
-      console.log(result);
+      // console.log(result);
       if (result.status !== 200) {
         return Promise.reject(result);
       }
@@ -259,7 +261,7 @@ const loadContent = url => {
       movies.innerHTML = "";
       const spinner = document.querySelector(".spinner");
       spinner.remove();
-      console.log(output);
+      // console.log(output);
 
       if (output.results.length == 0) {
         movies.insertAdjacentHTML(
@@ -311,7 +313,7 @@ const loadSearchContent = url => {
 
 const loadNextPage = url => {
   page += 1;
-  console.log(page);
+  // console.log(page);
 
   const pageUrl = url + `&page=${page}`;
   const loadButton = document.querySelector("#load-button");
@@ -322,14 +324,14 @@ const loadNextPage = url => {
       loadButton.remove();
       spinner.remove();
       const output = result;
-      console.log(output);
+      // console.log(output);
       if (result.status !== 200) {
         return Promise.reject(result);
       }
       return result.json();
     })
     .then(output => {
-      console.log(output);
+      // console.log(output);
 
       if (output.results.length == 0) {
         movies.insertAdjacentHTML(
@@ -345,13 +347,13 @@ const loadNextPage = url => {
           document
             .querySelector(".btn-block")
             .setAttribute("onclick", "loadNextPage(searchUrl)");
-          console.log(`${searchUrl}`);
+          // console.log(`${searchUrl}`);
         }
         if (url == trendingUrl) {
           document
             .querySelector(".btn-block")
             .setAttribute("onclick", "loadNextPage(trendingUrl)");
-          console.log(`${trendingUrl}`);
+          // console.log(`${trendingUrl}`);
         }
       }
     });
@@ -381,14 +383,14 @@ const addEventMovies = () => {
 };
 
 const isScroll = () => {
-  document.documentElement.scrollTop > 500
-    ? document.querySelector(".button-scroll").classList.add("show")
-    : document.querySelector(".button-scroll").classList.remove("show");
+  document.documentElement.scrollTop > 500 ?
+    document.querySelector(".button-scroll").classList.add("show") :
+    document.querySelector(".button-scroll").classList.remove("show");
 };
 
 const scrollToTop = scrollDuration => {
   var scrollStep = -window.scrollY / (scrollDuration / 15),
-    scrollInterval = setInterval(function() {
+    scrollInterval = setInterval(function () {
       if (window.scrollY != 0) {
         window.scrollBy(0, scrollStep);
       } else clearInterval(scrollInterval);
@@ -406,7 +408,7 @@ function showFullInfo() {
   } else {
     movies.innerHTML = `<h2 class="col-12 text-center text-danger"> Не прописан тип карточки</h2>`;
   }
-  console.log(this.dataset.id);
+  // console.log(this.dataset.id);
   fetch(url)
     .then(result => {
       if (result.status !== 200) {
@@ -415,7 +417,7 @@ function showFullInfo() {
       return result.json();
     })
     .then(result => {
-      console.log(result);
+      // console.log(result);
       const templateInfo = document.querySelector("#container-info-template");
       const clonetemplateInfo = templateInfo.content.cloneNode(true);
 
@@ -431,19 +433,24 @@ function showFullInfo() {
       const vote = document.querySelector(".vote");
       const release = document.querySelector(".release-date");
       const overview = document.querySelector(".overview");
+
+
+      const mediaType = result.title ? "movie" : "tv";
       trendTitle.innerHTML = `<h2 class="col-12 text-center">${result.name ||
         result.title}<h2>`;
-      movieInfoPoster.src = result.poster_path
-        ? `${urlPoster + result.poster_path}`
-        : noPosterUrl;
+      movieInfoPoster.src = result.poster_path ?
+        `${urlPoster + result.poster_path}` :
+        noPosterUrl;
       movieInfoPoster.alt = `${result.name || result.title}`;
-      result.homepage
-        ? (imdbRef.href = result.homepage)
-        : (imdbRef.href = `https://imdb.com/title/${result.imdb_id}`);
+      result.homepage ?
+        (imdbRef.href = result.homepage) :
+        (imdbRef.href = `https://imdb.com/title/${result.imdb_id}`);
       vote.innerHTML = `<b>Рейтинг</b>: ${result.vote_average}/10`;
       let releaseYear = result.release_date || result.first_air_date;
       release.innerHTML = `<b>Год выхода</b>: ${releaseYear.slice(0, 4)}`;
       overview.innerHTML = `<b>Описание</b>: <br>${result.overview}`;
+
+      getVideo(mediaType, this.dataset.id);
     });
 }
 
@@ -457,22 +464,49 @@ const getGenres = (url, itemName) => {
         return result.json();
       })
       .then(output => localStorage.setItem(itemName, JSON.stringify(output)))
-      .catch(reason => console.log(`Ошибка: ${reason.status}`));
+      // .catch(reason => console.log(`Ошибка: ${reason.status}`));
   }
 };
 
 const createFollowMovieSet = () => {
   followMovieSet =
-    localStorage.getItem("followMovieSet") === null
-      ? []
-      : JSON.parse(localStorage.getItem("followMovieSet"));
-  console.log(followMovieSet);
+    localStorage.getItem("followMovieSet") === null ? [] :
+    JSON.parse(localStorage.getItem("followMovieSet"));
+  // console.log(followMovieSet);
 };
 
-searchForm.addEventListener("submit", function(e) {
+searchForm.addEventListener("submit", function (e) {
   e.preventDefault();
   loadSearchContent(searchUrl);
 });
+
+const getVideo = (type, id) => {
+  const trailer = document.querySelector(".trailer");
+  const title = document.querySelector(".trailer-title");
+  const url = `https://api.themoviedb.org/3/${type}/${id}/videos?api_key=${apiKey}&language=ru-RU`;
+
+  fetch(url)
+    .then(result => {
+      // console.log(result);
+      if (result.status !== 200) {
+        return Promise.reject(result);
+      }
+      return result.json();
+    })
+    .then(output => {
+
+      let videoFrame;
+      if (output.results.length === 0) {
+       videoFrame = `<b>Нет информации о трейлере</b>`
+      } else {
+        title.innerHTML = `<b>Трейлер</b>:`
+        videoFrame = `<iframe class="embed-responsive-item" width="560" height="270" src="https://www.youtube.com/embed/${output.results[0].key}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+      };
+     
+      trailer.innerHTML = videoFrame;
+    })
+    .catch(reason => console.error(reason));
+}
 
 document.addEventListener("DOMContentLoaded", loadContent(trendingUrl));
 document.addEventListener(
@@ -481,12 +515,12 @@ document.addEventListener(
 );
 document.addEventListener("DOMContentLoaded", createFollowMovieSet());
 document.addEventListener("DOMContentLoaded", getGenres(genreTVUrl, "TV"));
-console.log(JSON.parse(localStorage.getItem("movies")));
-console.log(JSON.parse(localStorage.getItem("TV")));
+// console.log(JSON.parse(localStorage.getItem("movies")));
+// console.log(JSON.parse(localStorage.getItem("TV")));
 
 const debounce = (f, ms) => {
   let timer;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timer);
     timer = setTimeout(() => f.apply(this, args), ms);
   };
@@ -494,6 +528,6 @@ const debounce = (f, ms) => {
 
 const delayScroll = debounce(isScroll, 1000);
 
-window.onscroll = function() {
+window.onscroll = function () {
   delayScroll();
 };
