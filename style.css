@@ -44,6 +44,7 @@ body {
   }
   .jumbotron {
     padding: 20px 20px;
+    padding-top: 10px;
     background-color: #000;
     margin-bottom: 0px;
     border-radius: 0px;
@@ -58,6 +59,12 @@ body {
   }
   .button-scroll:focus {
     outline: none;
+  }
+  .imdb-ref {
+      display: block;
+    
+      font-size: 16px;
+      text-align: center;
   }
   .img-fluid {
     max-width: 100%;
@@ -84,11 +91,18 @@ body {
   
     position: relative;
   }
+  .vote{
+      margin-top: 20px;
+      display: block;
+  }
+  .realese-date {
+      display: block;
+  }
   .trend-title {
     display: block;
     background-color: #000;
     color: white;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     border-radius: 0px 0px 5px 5px;
     margin-top: 0px;
     margin-bottom: 10px;
@@ -122,7 +136,7 @@ body {
     
 }
    
-a:hover {
+.navbar > a:hover {
     text-decoration: none;
     color: white;
     -webkit-mask-image: linear-gradient(-75deg, rgba(0,0,0,.6) 30%, #000 50%, rgba(0,0,0,.6) 70%);
@@ -134,10 +148,17 @@ a:hover {
     transition: 1s;
   
   }
+  .btn-follow-info {
+      margin-bottom: 20px;
+      color: white;
+  }
   .btn {
     margin-top: 20px;
-    margin-bottom: 40px;
+    
     cursor:pointer;
+  }
+  .btn-dark {
+    margin-bottom: 40px; 
   }
 .movie-title {
 margin-bottom: 15px;
@@ -190,16 +211,31 @@ margin-bottom: 15px;
     border: none;
     color: white;
   }
+  .btn-follow {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    margin: 0px;
+    z-index: 100;
+    border: none;
+    color: white;
+  }
   .btn-follow:hover {
      opacity: 0.66;
       transition: 0.66s;
       color: white;
   }
 
+  .btn-follow-info:hover {
+    opacity: 0.66;
+     transition: 0.66s;
+     color: white;
+ }
+
 
 
   .red {
-    background-color:#e56c69;
+    background-color: #343a40;
   }
 
   .green {
@@ -212,7 +248,15 @@ margin-bottom: 15px;
   .navbar {
     background-color:#000;
     border-radius: 5px 5px 0px 0px;
+    overflow: hidden;
+    
     /* justify-content: flex-start; */
+  }
+
+
+  .navbar::-webkit-scrollbar { width: 0 !important }
+  .navbar > a {
+    white-space: nowrap;
   }
   .navbar-link {
 /* display: flex; */

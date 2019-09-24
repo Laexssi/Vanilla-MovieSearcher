@@ -22,7 +22,7 @@ const showFollowList = arr => {
   movies.insertAdjacentHTML("afterbegin", '<div class="spinner"></div>');
   const trendTitle = document.querySelector(".trend-title");
   if (trendTitle)
-    trendTitle.innerHTML = `<h2 class="col-12 text-center">Фильмы, за которыми следите<h2>`;
+    trendTitle.innerHTML = `<h3 class="col-12 text-center">Фильмы, за которыми следите</h3>`;
   movies.innerHTML = "";
   arr.forEach(async (item, index) => {
     const url = `https://api.themoviedb.org/3/movie/${item}?api_key=${apiKey}&language=ru`;
@@ -32,8 +32,10 @@ const showFollowList = arr => {
           return Promise.reject(result);
         }
         return result.json();
+        
       })
       .then(item => {
+        console.log(item);
         const movieCard = document.createElement("div");
         movieCard.classList.add("col-12", "col-md-6", "col-xl-3", "card");
 
@@ -51,10 +53,14 @@ const showFollowList = arr => {
           "btn-follow",
           "red"
         );
-        unfollowButton.innerText = "Удалить";
+        unfollowButton.innerText = "Слежу";
         unfollowButton.setAttribute(
           "onclick",
           "removeFromFollowWithRender(this)"
+        );
+        unfollowButton.setAttribute(
+          "data-id",
+          `${item.id}`
         );
 
         const movieName = document.createElement("h5");
@@ -107,19 +113,24 @@ const showFollowList = arr => {
 };
 
 const addToFollow = button => {
-  const id = button.parentNode.parentNode.getAttribute("data-id");
+  const id = button.getAttribute("data-id");
   if (followMovieSet.includes(id)) return;
   followMovieSet.push(id);
   // console.log(followMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(followMovieSet));
-  button.innerText = "Удалить";
+  button.innerText = "Слежу";
   button.setAttribute("onclick", "removeFromFollow(this)");
+  button.setAttribute(
+    "data-id",
+    id
+  );
+
   button.classList.remove("green");
   button.classList.add("red");
 };
 
 const removeFromFollow = button => {
-  const id = button.parentNode.parentNode.getAttribute("data-id");
+  const id = button.getAttribute("data-id");
 
   const newFollowMovieSet = followMovieSet.filter(value => value !== id);
   followMovieSet = newFollowMovieSet;
@@ -178,8 +189,9 @@ const generateMovieCard = (item, index) => {
         "btn-follow",
         "red"
       );
-      unfollowButton.innerText = "Удалить";
+      unfollowButton.innerText = "Слежу";
       unfollowButton.setAttribute("onclick", "removeFromFollow(this)");
+      unfollowButton.setAttribute("data-id", item.id);
       if (mediaType === "movie") spacer.appendChild(unfollowButton);
     } else {
       const followButton = document.createElement("div");
@@ -191,6 +203,7 @@ const generateMovieCard = (item, index) => {
       );
       followButton.innerText = "Следить";
       followButton.setAttribute("onclick", "addToFollow(this)");
+      followButton.setAttribute("data-id", item.id);
       if (mediaType === "movie") spacer.appendChild(followButton);
     }
 
@@ -284,7 +297,7 @@ const loadContent = url => {
       if (buttonUrl === trendingUrl) {
         container.insertAdjacentHTML(
           "afterbegin",
-          "<div class='trend-title'><h2 class='col-12 text-center '>Популярные на этой неделе</h2></div>"
+          "<div class='trend-title'><h3 class='col-12 text-center '>Популярные на этой неделе</h3></div>"
         );
       }
     })
@@ -306,17 +319,19 @@ const loadSearchContent = url => {
   movies.insertAdjacentHTML("beforeend", '<div class="spinner"></div>');
 
   const trendTitle = document.querySelector(".trend-title");
-  trendTitle.innerHTML = `<h2 class="col-12 text-center">Результаты поиска<h2>`;
+  trendTitle.innerHTML = `<h3 class="col-12 text-center">Результаты поиска</h3>`;
   movies.innerHTML = "";
   loadContent(searchUrl);
 };
 
 const loadNextPage = url => {
+
   page += 1;
   // console.log(page);
 
   const pageUrl = url + `&page=${page}`;
   const loadButton = document.querySelector("#load-button");
+  loadButton.setAttribute("disabled", "disabled");
   loadButton.insertAdjacentHTML("beforebegin", '<div class="spinner"></div>');
   fetch(pageUrl)
     .then(result => {
@@ -408,7 +423,7 @@ function showFullInfo() {
   } else {
     movies.innerHTML = `<h2 class="col-12 text-center text-danger"> Не прописан тип карточки</h2>`;
   }
-  // console.log(this.dataset.id);
+  console.log(this.dataset.id);
   fetch(url)
     .then(result => {
       if (result.status !== 200) {
@@ -417,7 +432,7 @@ function showFullInfo() {
       return result.json();
     })
     .then(result => {
-      // console.log(result);
+      console.log(result);
       const templateInfo = document.querySelector("#container-info-template");
       const clonetemplateInfo = templateInfo.content.cloneNode(true);
 
@@ -433,11 +448,12 @@ function showFullInfo() {
       const vote = document.querySelector(".vote");
       const release = document.querySelector(".release-date");
       const overview = document.querySelector(".overview");
+      const followButton = document.querySelector(".btn-follow-info");
 
 
       const mediaType = result.title ? "movie" : "tv";
-      trendTitle.innerHTML = `<h2 class="col-12 text-center">${result.name ||
-        result.title}<h2>`;
+      trendTitle.innerHTML = `<h3 class="col-12 text-center">${result.name ||
+        result.title}</h3>`;
       movieInfoPoster.src = result.poster_path ?
         `${urlPoster + result.poster_path}` :
         noPosterUrl;
@@ -449,6 +465,19 @@ function showFullInfo() {
       let releaseYear = result.release_date || result.first_air_date;
       release.innerHTML = `<b>Год выхода</b>: ${releaseYear.slice(0, 4)}`;
       overview.innerHTML = `<b>Описание</b>: <br>${result.overview}`;
+   
+      followButton.setAttribute("data-id", this.dataset.id)
+      if (followMovieSet.includes(this.dataset.id.toString(10))){
+      followButton.setAttribute("onclick", `removeFromFollow(this)`);
+      followButton.classList.remove("green");
+      followButton.classList.add("red");
+      followButton.innerText = "Слежу";
+      } else {
+        followButton.setAttribute("onclick", `addToFollow(this)`);
+        followButton.classList.remove("red");
+        followButton.classList.add("green");
+        followButton.innerText = "Следить";
+      }
 
       getVideo(mediaType, this.dataset.id);
     });

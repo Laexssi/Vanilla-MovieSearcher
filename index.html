@@ -24,13 +24,16 @@
      
       <div class="col-4 ">
       <img class="poster img-fluid" />
+      <p class="vote"></p>
+      <p class="release-date"></p>
+      <div class="btn btn-block btn-follow-info ">Следить</div>
         <p class="text-center">
           <a class="imdb-ref" href="" target="_blank">Сайт фильма</a>
         </p>
+     
       </div>
       <div class="col-8 no-padding">
-        <p class="vote"></p>
-        <p class="release-date"></p>
+      
         <p class="overview"></p>
         <p class="trailer-title"></p>
         <div class="trailer embed-responsive embed-responsive-16by9"></div>
@@ -38,7 +41,7 @@
     </template>
    
     <div class="container">
-        <nav class="navbar  justify-content-start">
+        <nav class="navbar  justify-content-start flex-nowrap overflow-auto">
             
               <a href="./index.html" class="navbar-link">Общий топ</a>
               <a href="#" onclick="loadContent(onlyMoviesUrl)" class="navbar-link">Фильмы</a>
