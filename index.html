@@ -10,8 +10,11 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+    />
     <script src="https://kit.fontawesome.com/4cc2a98f97.js"></script>
     <title>
       MovieSearcher
@@ -19,36 +22,36 @@
   </head>
 
   <body>
-
     <template id="container-info-template">
-     
       <div class="col-4 ">
-      <img class="poster img-fluid" />
-      <p class="vote"></p>
-      <p class="release-date"></p>
-      <div class="btn btn-block btn-follow-info ">Следить</div>
+        <img class="poster img-fluid" />
+        <p class="vote"></p>
+        <p class="release-date"></p>
+        <div class="btn btn-block btn-follow-info ">Следить</div>
         <p class="text-center">
           <a class="imdb-ref" href="" target="_blank">Сайт фильма</a>
         </p>
-     
       </div>
       <div class="col-8 no-padding">
-      
         <p class="overview"></p>
         <p class="trailer-title"></p>
         <div class="trailer embed-responsive embed-responsive-16by9"></div>
       </div>
     </template>
-   
+
     <div class="container">
-        <nav class="navbar  justify-content-start flex-nowrap overflow-auto">
-            
-              <a href="./index.html" class="navbar-link">Общий топ</a>
-              <a href="#" onclick="loadContent(onlyMoviesUrl)" class="navbar-link">Фильмы</a>
-              <a href="#" onclick="loadContent(onlyTVUrl)" class="navbar-link">Сериалы</a>
-              <a href="#" onclick="showFollowList(followMovieSet)" class="navbar-link">Мой список</a>
-         
-          </nav>
+      <nav class="navbar  justify-content-start flex-nowrap overflow-auto">
+        <a href="./index.html" class="navbar-link">Общий топ</a>
+        <a href="#" onclick="loadContent(onlyMoviesUrl)" class="navbar-link"
+          >Фильмы</a
+        >
+        <a href="#" onclick="loadContent(onlyTVUrl)" class="navbar-link"
+          >Сериалы</a
+        >
+        <a href="#" onclick="showFollowList(followMovieSet)" class="navbar-link"
+          >Мой список</a
+        >
+      </nav>
       <div class="jumbotron">
         <form action="" id="search-form">
           <input

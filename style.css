@@ -21,12 +21,13 @@ body {
     vertical-align: top;
     width: 1.5em;
     pointer-events: none;
+    color: white;
   }
   .button-scroll {
     display: inline-block;
-    width: 75px;
-    height: 75px;
-    background-color: lightsteelblue;
+    width: 65px;
+    height: 65px;
+    background-color: #343a40;
     border-radius: 50%;
     border: none;
     z-index: 55;
@@ -37,6 +38,13 @@ body {
     opacity: 0;
     /* visibility: hidden; */
     z-index: 1000;
+  }
+  .button-scroll:hover {
+    cursor: pointer;
+    opacity: 0.66;
+  }
+  .button-scroll:focus {
+    outline: none;
   }
   .show {
     opacity: 1;
@@ -53,13 +61,7 @@ body {
   /* .card-title {
         margin-top: 10px;
     } */
-  .button-scroll:hover {
-    cursor: pointer;
-    background-color: rgb(236, 230, 230);
-  }
-  .button-scroll:focus {
-    outline: none;
-  }
+  
   .imdb-ref {
       display: block;
     
