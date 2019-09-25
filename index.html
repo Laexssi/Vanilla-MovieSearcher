@@ -23,7 +23,7 @@
 
   <body>
     <template id="container-info-template">
-      <div class="col-4 ">
+      <div class="col-4 margin-left">
         <img class="poster img-fluid" />
         <p class="vote"></p>
         <p class="release-date"></p>
@@ -33,7 +33,7 @@
         <div class="btn btn-sm btn-follow-info fa-bookmark"></div>
       
       </div>
-      <div class="col-8 no-padding">
+      <div class="col-8 margin-left">
         <p class="trailer-title"></p>
         <div class="trailer embed-responsive embed-responsive-16by9"></div>
         <p class="overview"></p>
@@ -43,6 +43,9 @@
 
     <div class="container">
       <nav class="navbar  justify-content-start flex-nowrap overflow-auto">
+          <a href="#" onclick="showFollowList(followMovieSet)" class="navbar-link"
+          >Мой список</a
+        >
         <a href="./index.html" class="navbar-link">Общий топ</a>
         <a href="#" onclick="loadContent(onlyMoviesUrl)" class="navbar-link"
           >Фильмы</a
@@ -50,9 +53,7 @@
         <a href="#" onclick="loadContent(onlyTVUrl)" class="navbar-link"
           >Сериалы</a
         >
-        <a href="#" onclick="showFollowList(followMovieSet)" class="navbar-link"
-          >Мой список</a
-        >
+        
       </nav>
       <div class="jumbotron">
         <form action="" id="search-form">

@@ -1,7 +1,13 @@
 body {
     font-family: 'Roboto';
   }
-  .info-block {
+
+  .header {
+    padding-left: 0px;
+    padding-right:0px;
+  }
+
+  .info-block { 
     background-color: rgb(233, 236, 239, 0.3);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -108,6 +114,13 @@ body {
     border-radius: 0px 0px 5px 5px;
     margin-top: 0px;
     margin-bottom: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .trend-title > h3 {
+    padding-left: 0px;
+    padding-right: 0px;
   }
   .movie-info-title {
     color: white;
@@ -272,8 +285,6 @@ margin-bottom: 15px;
   .trailer {
     margin-bottom: 20px;
   }
-
-  .container {
-    padding-left:0;
-    padding-right:0;
+  .trailer-title {
+    margin-bottom: 0px;
   }
