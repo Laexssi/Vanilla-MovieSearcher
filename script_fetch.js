@@ -50,9 +50,11 @@ const showFollowList = arr => {
 
           "btn-sm",
           "btn-follow",
-          "red"
+          "active",
+          "fa-bookmark",
+          "fas"
         );
-        unfollowButton.innerText = "Слежу";
+     
         unfollowButton.setAttribute(
           "onclick",
           "removeFromFollowWithRender(this)"
@@ -114,12 +116,13 @@ const addToFollow = button => {
   followMovieSet.push(id);
   // console.log(followMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(followMovieSet));
-  button.innerText = "Слежу";
+  
   button.setAttribute("onclick", "removeFromFollow(this)");
   button.setAttribute("data-id", id);
 
-  button.classList.remove("green");
-  button.classList.add("red");
+  button.classList.toggle("fas");
+  button.classList.toggle("far");
+  button.classList.toggle("active");
 };
 
 const removeFromFollow = button => {
@@ -129,10 +132,12 @@ const removeFromFollow = button => {
   followMovieSet = newFollowMovieSet;
   // console.log(newFollowMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(newFollowMovieSet));
-  button.innerText = "Следить";
+  button.innerText = "";
   button.setAttribute("onclick", "addToFollow(this)");
-  button.classList.remove("red");
-  button.classList.add("green");
+  button.classList.toggle("active");
+  button.classList.toggle("fas");
+  button.classList.toggle("far");
+ 
 };
 
 const removeFromFollowWithRender = button => {
@@ -176,15 +181,15 @@ const generateMovieCard = (item, index) => {
     const mediaType = item.title ? "movie" : "tv";
     if (followMovieSet.includes(item.id.toString(10))) {
       const unfollowButton = document.createElement("div");
-      unfollowButton.classList.add("btn", "btn-sm", "btn-follow", "red");
-      unfollowButton.innerText = "Слежу";
+      unfollowButton.classList.add("btn", "btn-sm", "btn-follow", "active", "fa-bookmark", "fas");
+      
       unfollowButton.setAttribute("onclick", "removeFromFollow(this)");
       unfollowButton.setAttribute("data-id", item.id);
       if (mediaType === "movie") spacer.appendChild(unfollowButton);
     } else {
       const followButton = document.createElement("div");
-      followButton.classList.add("btn", "btn-sm", "btn-follow", "green");
-      followButton.innerText = "Следить";
+      followButton.classList.add("btn", "btn-sm", "btn-follow", "fa-bookmark", "far");
+     
       followButton.setAttribute("onclick", "addToFollow(this)");
       followButton.setAttribute("data-id", item.id);
       if (mediaType === "movie") spacer.appendChild(followButton);
@@ -450,14 +455,15 @@ function showFullInfo() {
       followButton.setAttribute("data-id", this.dataset.id);
       if (followMovieSet.includes(this.dataset.id.toString(10))) {
         followButton.setAttribute("onclick", `removeFromFollow(this)`);
-        followButton.classList.remove("green");
-        followButton.classList.add("red");
-        followButton.innerText = "Слежу";
+        followButton.classList.add("active");
+        followButton.classList.add("fa-bookmark");
+        followButton.classList.add("fas");
       } else {
         followButton.setAttribute("onclick", `addToFollow(this)`);
-        followButton.classList.remove("red");
-        followButton.classList.add("green");
-        followButton.innerText = "Следить";
+        followButton.classList.add("fa-bookmark");
+        followButton.classList.add("far");
+  
+        
       }
 
       getVideo(mediaType, this.dataset.id);

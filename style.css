@@ -66,7 +66,7 @@ body {
       display: block;
     
       font-size: 16px;
-      text-align: center;
+      text-align: left;
   }
   .img-fluid {
     max-width: 100%;
@@ -150,10 +150,7 @@ body {
     transition: 1s;
   
   }
-  .btn-follow-info {
-      margin-bottom: 20px;
-      color: white;
-  }
+
   .btn {
     margin-top: 20px;
     
@@ -203,37 +200,40 @@ margin-bottom: 15px;
       transform: rotate(360deg);
     }
   }
+  .btn-follow-info {
+    margin: 0;
+    color: black;
+    font-size: 25px;
+    padding: 0;
+}
+  .btn-follow {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    margin: 0px;
+    
+    border: none;
+    outline: none;
+    background: transparent;
+    font-weight: light;
+    font-size: 25px;
+    font-weight: light;
+  }
+  .btn-follow.active,
+  .btn-follow-info.active {
+    color: #000;
+  }
 
-  .btn-follow {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    margin: 0px;
-    z-index: 100;
-    border: none;
-    color: white;
-  }
-  .btn-follow {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    margin: 0px;
-    z-index: 100;
-    border: none;
-    color: white;
-  }
-  .btn-follow:hover {
+
+  .btn-follow:hover,
+  .btn-follow-info:hover {
      opacity: 0.66;
       transition: 0.66s;
-      color: white;
+     
   }
 
-  .btn-follow-info:hover {
-    opacity: 0.66;
-     transition: 0.66s;
-     color: white;
- }
 
+ 
 
 
   .red {
