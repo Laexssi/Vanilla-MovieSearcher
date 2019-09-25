@@ -507,7 +507,7 @@ searchForm.addEventListener("submit", function(e) {
 
 const getVideo = (type, id) => {
   const trailer = document.querySelector(".trailer");
-  const title = document.querySelector(".trailer-title");
+  
   const url = `https://api.themoviedb.org/3/${type}/${id}/videos?api_key=${apiKey}&language=ru-RU`;
 
   fetch(url)
@@ -523,7 +523,7 @@ const getVideo = (type, id) => {
       if (output.results.length === 0) {
         videoFrame = `<b>Нет информации о трейлере</b>`;
       } else {
-        title.innerHTML = `<b>Трейлер</b>:`;
+        
         videoFrame = `<iframe class="embed-responsive-item" width="560" height="270" src="https://www.youtube.com/embed/${output.results[0].key}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
       }
 
