@@ -116,7 +116,10 @@ const addToFollow = button => {
   followMovieSet.push(id);
   // console.log(followMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(followMovieSet));
-  
+  if (button.innerHTML ===  `<b class="button-status"> Добавить в избранное</b>`)
+  {
+    button.innerHTML = `<b class="button-status"> В&nbsp;избранном</b>`;
+  }
   button.setAttribute("onclick", "removeFromFollow(this)");
   button.setAttribute("data-id", id);
 
@@ -132,11 +135,16 @@ const removeFromFollow = button => {
   followMovieSet = newFollowMovieSet;
   // console.log(newFollowMovieSet);
   localStorage.setItem("followMovieSet", JSON.stringify(newFollowMovieSet));
-  button.innerText = "";
+  if (button.innerHTML ===  `<b class="button-status"> В&nbsp;избранном</b>`)
+  {
+    button.innerHTML = `<b class="button-status"> Добавить в избранное</b>`;
+  }
+
   button.setAttribute("onclick", "addToFollow(this)");
   button.classList.toggle("active");
   button.classList.toggle("fas");
   button.classList.toggle("far");
+
  
 };
 
@@ -458,12 +466,12 @@ function showFullInfo() {
         followButton.classList.add("active");
         followButton.classList.add("fa-bookmark");
         followButton.classList.add("fas");
+        followButton.innerHTML = `<b class="button-status"> В&nbsp;избранном</b>`;
       } else {
         followButton.setAttribute("onclick", `addToFollow(this)`);
         followButton.classList.add("fa-bookmark");
         followButton.classList.add("far");
-  
-        
+        followButton.innerHTML = `<b class="button-status"> Добавить в избранное</b>`;
       }
 
       getVideo(mediaType, this.dataset.id);

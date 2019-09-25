@@ -64,7 +64,7 @@ body {
   
   .imdb-ref {
       display: block;
-    
+    color: #000;
       font-size: 16px;
       text-align: left;
   }
@@ -178,6 +178,7 @@ margin-bottom: 15px;
     }
   }
 }
+
   .spinner {
     margin: 0 auto;
     margin-bottom: 100px;
@@ -205,6 +206,7 @@ margin-bottom: 15px;
     color: black;
     font-size: 25px;
     padding: 0;
+    text-align: left;
 }
   .btn-follow {
     position: absolute;
@@ -216,7 +218,7 @@ margin-bottom: 15px;
     outline: none;
     background: transparent;
     font-weight: light;
-    font-size: 25px;
+    font-size: 26px;
     font-weight: light;
   }
   .btn-follow.active,
@@ -232,17 +234,17 @@ margin-bottom: 15px;
      
   }
 
+.button-status {
+  font-weight: 200;
+  font-family: "Roboto";
+  font-size: 16px;
+  text-align: left;
+  display: block;
+  margin-top: 10px;
 
+}
  
 
-
-  .red {
-    background-color: #343a40;
-  }
-
-  .green {
-    background-color: #5ba666;
-  }
   .card-block {
     padding-bottom: 30px;
   }
